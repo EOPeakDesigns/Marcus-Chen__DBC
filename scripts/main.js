@@ -161,6 +161,10 @@ class BusinessCardApp {
    * Setup global event listeners
    */
   setupEventListeners() {
+    if (window.FocusReset) {
+      window.FocusReset.init();
+    }
+
     // Handle page visibility changes
     document.addEventListener('visibilitychange', () => {
       this.handleVisibilityChange();

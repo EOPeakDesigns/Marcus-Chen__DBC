@@ -1,0 +1,94 @@
+/* Touch UX — press feedback without sticky hover/focus frames */
+
+.smart-btn,
+.showcase-play-btn,
+.action-row--link,
+.action-row__main,
+.action-row__tool {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (hover: none), (pointer: coarse) {
+  .action-row--compound:hover,
+  .action-row__main:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: var(--color-border);
+    background: transparent;
+  }
+
+  .smart-btn:hover,
+  .smart-btn--qr:hover,
+  .smart-btn--schedule:hover,
+  .smart-btn--schedule-unconfigured:hover,
+  .action-row--link:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: var(--color-border);
+    background: var(--color-bg-secondary);
+  }
+
+  .action-row--compound:focus-within:not(:has(:focus-visible)) {
+    border-color: var(--color-border);
+    box-shadow: none;
+  }
+
+  .action-row__main:focus:not(:focus-visible) {
+    background: transparent;
+  }
+
+  .action-row--link:hover .action-row__chevron {
+    transform: none;
+    fill: var(--color-text-secondary);
+  }
+
+  .showcase-play-btn:hover {
+    transform: none;
+    box-shadow:
+      0 0 0 2px var(--color-surface),
+      0 4px 14px var(--color-glow),
+      0 2px 8px rgba(0, 0, 0, 0.35);
+  }
+
+  .smart-btn:active,
+  .showcase-play-btn:active,
+  .action-row--link:active,
+  .action-row__main:active {
+    transform: scale(0.98);
+    opacity: 0.88;
+    transition-duration: 0.08s;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .smart-btn:active,
+  .action-row--link:active,
+  .action-row__main:active {
+    transform: scale(0.99);
+    transition-duration: 0.08s;
+  }
+}
+
+/* Hard reset after tap or modal close — beats sticky :hover / :focus-visible */
+.smart-btn.action-reset,
+.smart-btn.action-reset:hover,
+.smart-btn.action-reset:focus,
+.smart-btn.action-reset:focus-visible {
+  transform: none !important;
+  border-color: var(--color-border) !important;
+  box-shadow: none !important;
+  outline: none !important;
+  background: var(--color-bg-secondary) !important;
+}
+
+.showcase-play-btn.action-reset,
+.showcase-play-btn.action-reset:hover,
+.showcase-play-btn.action-reset:focus,
+.showcase-play-btn.action-reset:focus-visible {
+  transform: none !important;
+  outline: none !important;
+  box-shadow:
+    0 0 0 2px var(--color-surface),
+    0 4px 14px var(--color-glow),
+    0 2px 8px rgba(0, 0, 0, 0.35) !important;
+}

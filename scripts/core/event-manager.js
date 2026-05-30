@@ -64,7 +64,7 @@ class EventManager {
     }
 
     if (action === 'open-qr') {
-      this.handleQRCodeClick();
+      this.handleQRCodeClick(button);
     }
   }
 
@@ -202,18 +202,21 @@ class EventManager {
 
   /**
    * Handle QR code button click
+   * @param {HTMLElement} button
    */
-  handleQRCodeClick() {
-    // Open QR code modal through app instance
+  handleQRCodeClick(button) {
     if (window.app && window.app.qrModalManager) {
-      window.app.qrModalManager.open();
-    } else if (window.QRModalManager) {
-      // Fallback to direct class instantiation
-      const qrModal = new window.QRModalManager();
-      qrModal.open();
-    } else {
-      console.error('QR Modal Manager not available. Please ensure the application is properly initialized.');
+      window.app.qrModalManager.open(button);
+      return;
     }
+
+    if (window.QRModalManager) {
+      const qrModal = new window.QRModalManager();
+      qrModal.open(button);
+      return;
+    }
+
+    console.error('QR Modal Manager not available. Please ensure the application is properly initialized.');
   }
 
   /**

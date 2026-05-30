@@ -88,27 +88,34 @@ class QRModalManager {
 
   /**
    * Open QR code modal
+   * @param {HTMLElement} [triggerEl] - Button that opened the modal
    */
-  open() {
+  open(triggerEl) {
     if (!this.modal || this.isOpen) return;
 
     this.isOpen = true;
     this.modal.classList.add('show');
     this.modal.setAttribute('aria-hidden', 'false');
-    
-    // Store the element that opened the modal for smart focus management
-    this.openingElement = document.activeElement;
-    
-    // Focus management - focus close button for keyboard accessibility
-    this.closeBtn?.focus();
-    
-    // Prevent body scroll
-    document.body.style.overflow = 'hidden';
+
+    this.openingElement = triggerEl instanceof HTMLElement
+      ? triggerEl
+      : document.querySelector('[data-action="open-qr"]');
+
+    if (this.openingElement instanceof HTMLElement) {
+      this.openingElement.classList.remove('modal-close-focus');
+      this.openingElement.classList.add('action-reset');
+      this.openingElement.blur();
+      requestAnimationFrame(() => {
+        this.openingElement?.classList.remove('action-reset');
+      });
+    }
 
     this.previousFocus = this.openingElement;
+    this.closeBtn?.focus();
+
+    document.body.style.overflow = 'hidden';
     this.enableFocusTrap();
-    
-    // Announce to screen readers
+
     this.announce('QR Code modal opened');
   }
 
@@ -126,36 +133,39 @@ class QRModalManager {
     document.body.style.overflow = '';
 
     this.disableFocusTrap();
-    
-    // Reset button to initial state when modal closes
+
     this.resetButtonToInitialState();
-    
-    // Smart focus management - only return focus for keyboard users
-    if (this.openingElement && this.openingElement !== document.body) {
-      // Check if the opening element is still in the DOM
-      if (document.contains(this.openingElement)) {
-        // Add class to prevent focus ring when returning focus
-        this.openingElement.classList.add('modal-close-focus');
-        this.openingElement.focus();
-        
-        // Remove the class after a short delay to restore normal focus behavior
-        setTimeout(() => {
-          this.openingElement?.classList.remove('modal-close-focus');
-        }, 100);
-      } else {
-        // If opening element is no longer in DOM, blur focus
-        document.activeElement?.blur();
-      }
-    } else {
-      // For mouse/touch users, remove focus to prevent unwanted focus rings
-      document.activeElement?.blur();
-    }
-    
-    // Clear the opening element reference
-    this.openingElement = null;
-    
-    // Announce to screen readers
+    this.releaseTriggerFocus();
+
     this.announce('QR Code modal closed');
+  }
+
+  /**
+   * Clear focus/hover chrome on the trigger after the modal closes
+   */
+  releaseTriggerFocus() {
+    const trigger = this.openingElement;
+    this.openingElement = null;
+    this.previousFocus = null;
+
+    if (document.activeElement instanceof HTMLElement && this.modal?.contains(document.activeElement)) {
+      document.activeElement.blur();
+    }
+
+    if (!trigger || !document.contains(trigger)) return;
+
+    if (window.FocusReset?.resetControlVisual) {
+      window.FocusReset.resetControlVisual(trigger);
+      return;
+    }
+
+    trigger.classList.remove('modal-close-focus');
+    trigger.classList.add('action-reset');
+    trigger.blur();
+    requestAnimationFrame(() => {
+      trigger.classList.remove('action-reset');
+      trigger.blur();
+    });
   }
 
   /**

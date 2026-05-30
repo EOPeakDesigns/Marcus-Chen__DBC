@@ -47,12 +47,12 @@ class VideoModalManager {
       this.playTrigger.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        this.open();
+        this.open(this.playTrigger);
       });
       this.playTrigger.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          this.open();
+          this.open(this.playTrigger);
         }
       });
     }
@@ -235,7 +235,10 @@ class VideoModalManager {
     this.iframe.removeAttribute('src');
   }
 
-  open() {
+  /**
+   * @param {HTMLElement} [triggerEl] - Portrait play control that opened the modal
+   */
+  open(triggerEl) {
     const config = this.getConfig();
     const hasEmbed = this.iframe && (this.getEmbedUrlFromConfig() || this.iframe.getAttribute('data-src'));
     const hasFile = config && this.hasValidSource(config) && (config.source?.type || config.type) === 'file';
@@ -248,7 +251,18 @@ class VideoModalManager {
     }
 
     this.isOpen = true;
-    this.openingElement = document.activeElement;
+    this.openingElement = triggerEl instanceof HTMLElement
+      ? triggerEl
+      : this.playTrigger;
+
+    if (this.openingElement instanceof HTMLElement) {
+      this.openingElement.classList.remove('modal-close-focus');
+      this.openingElement.classList.add('action-reset');
+      this.openingElement.blur();
+      requestAnimationFrame(() => {
+        this.openingElement?.classList.remove('action-reset');
+      });
+    }
 
     if (hasFile) {
       this.mountLegacyVideo(config);
@@ -279,17 +293,36 @@ class VideoModalManager {
 
     this.disableFocusTrap();
     this.unbindEscape();
+    this.releaseTriggerFocus();
 
-    if (this.openingElement && document.contains(this.openingElement)) {
-      this.openingElement.classList.add('modal-close-focus');
-      this.openingElement.focus();
-      setTimeout(() => this.openingElement?.classList.remove('modal-close-focus'), 100);
-    } else {
-      document.activeElement?.blur();
+    this.announce('Video closed');
+  }
+
+  /**
+   * Clear focus/hover chrome on the portrait play button after the modal closes
+   */
+  releaseTriggerFocus() {
+    const trigger = this.openingElement;
+    this.openingElement = null;
+
+    if (document.activeElement instanceof HTMLElement && this.modal?.contains(document.activeElement)) {
+      document.activeElement.blur();
     }
 
-    this.openingElement = null;
-    this.announce('Video closed');
+    if (!trigger || !document.contains(trigger)) return;
+
+    if (window.FocusReset?.resetControlVisual) {
+      window.FocusReset.resetControlVisual(trigger);
+      return;
+    }
+
+    trigger.classList.remove('modal-close-focus');
+    trigger.classList.add('action-reset');
+    trigger.blur();
+    requestAnimationFrame(() => {
+      trigger.classList.remove('action-reset');
+      trigger.blur();
+    });
   }
 
   /**

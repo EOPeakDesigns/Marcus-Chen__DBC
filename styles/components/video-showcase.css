@@ -51,18 +51,22 @@
   fill: currentColor;
 }
 
-.showcase-play-btn:hover,
-.showcase-play-btn:focus-visible {
+@media (hover: hover) and (pointer: fine) {
+  .showcase-play-btn:hover {
+    transform: scale(1.08);
+    box-shadow:
+      0 0 0 2px var(--color-surface),
+      0 6px 20px var(--color-glow),
+      0 0 24px rgba(34, 181, 217, 0.25);
+  }
+}
+
+.showcase-play-btn:focus-visible:not(.action-reset) {
   transform: scale(1.08);
   box-shadow:
     0 0 0 2px var(--color-surface),
     0 6px 20px var(--color-glow),
     0 0 24px rgba(34, 181, 217, 0.25);
-  outline: none;
-}
-
-.showcase-play-btn.modal-close-focus,
-.showcase-play-btn.modal-close-focus:focus-visible {
   outline: none;
 }
 
