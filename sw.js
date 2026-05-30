@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-globals */
-const CACHE_VERSION = 'dbc-p10-facebook-deeplink-v1';
+const CACHE_VERSION = 'dbc-p11-social-fast-tap-v1';
 const CACHE_NAME = `digital-business-card-${CACHE_VERSION}`;
 const OFFLINE_URL = '/offline.html';
 

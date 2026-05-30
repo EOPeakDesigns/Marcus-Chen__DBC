@@ -8,6 +8,7 @@
 .action-row__tool,
 .stat-card {
   -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 @media (hover: none), (pointer: coarse) {

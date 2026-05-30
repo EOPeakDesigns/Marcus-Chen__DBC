@@ -206,7 +206,7 @@ const FocusReset = (() => {
 
 
 
-    if (target.closest('.copy-btn, .action-row__tool')) return;
+    if (target.closest('.copy-btn, .action-row__tool, .social-btn')) return;
 
 
 

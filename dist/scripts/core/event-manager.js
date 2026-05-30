@@ -18,6 +18,7 @@ class EventManager {
   init() {
     this.setupCopyButtons();
     this.setupContactPills();
+    this.setupSocialFastTap();
     this.setupActionButtons();
     this.setupKeyboardNavigation();
   }
@@ -121,6 +122,32 @@ class EventManager {
   }
 
   /**
+   * Instant social launch on touch — avoids waiting for synthetic click
+   */
+  setupSocialFastTap() {
+    document.addEventListener(
+      'pointerup',
+      (e) => {
+        if (e.pointerType === 'mouse') return;
+
+        const btn = e.target.closest('.social-btn[data-contact]');
+        if (!btn || !LinkRouter.shouldUseDeepLinks()) return;
+
+        const appHref = btn.getAttribute('data-app-href');
+        const webHref = btn.getAttribute('data-web-href') || btn.href;
+        if (!appHref || !webHref) return;
+
+        e.preventDefault();
+        LinkRouter.markSocialTouchHandled(btn);
+        btn.classList.add('action-reset');
+        btn.blur();
+        LinkRouter.openSocialFromElement(btn);
+      },
+      { capture: true, passive: false }
+    );
+  }
+
+  /**
    * Setup contact pill event listeners
    */
   setupContactPills() {
@@ -130,6 +157,15 @@ class EventManager {
 
     this.contactPills.forEach((pill) => {
       pill.addEventListener('click', (e) => {
+        if (
+          pill.classList.contains('social-btn') &&
+          LinkRouter.consumeSocialTouchHandled(pill)
+        ) {
+          e.preventDefault();
+          e.stopPropagation();
+          return;
+        }
+
         const handled = LinkRouter.handleLinkClick(pill, e);
         if (handled) {
           e.preventDefault();

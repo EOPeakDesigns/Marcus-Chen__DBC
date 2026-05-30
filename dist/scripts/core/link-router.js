@@ -3,11 +3,12 @@
  */
 
 class LinkRouter {
-  static APP_FALLBACK_MS = 2200;
-  static SOCIAL_FALLBACK_MS = 2600;
-  static FACEBOOK_FALLBACK_MS = 3200;
+  static APP_FALLBACK_MS = 1800;
+  static SOCIAL_FALLBACK_MS = 1500;
+  static FACEBOOK_FALLBACK_MS = 2000;
   static _suppressErrorsUntil = 0;
   static _activeNavigation = null;
+  static _socialTouchHandled = null;
 
   static isMobile() {
     return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
@@ -254,7 +255,11 @@ class LinkRouter {
 
   static resolveSocialLaunchUrl(platform, webUrl, iosAppUrl) {
     if (platform === 'facebook') {
-      return LinkRouter.buildFacebookAppUrl(webUrl);
+      const normalized = LinkRouter.normalizeFacebookUrl(webUrl);
+      if (LinkRouter.isAndroid()) {
+        return LinkRouter.buildAndroidFacebookIntent(normalized);
+      }
+      return LinkRouter.buildFacebookAppUrl(normalized);
     }
 
     if (LinkRouter.isAndroid()) {
@@ -270,35 +275,50 @@ class LinkRouter {
     return iosAppUrl;
   }
 
-  static requiresTopNavigation(appUrl) {
-    return (
-      appUrl.startsWith('fb://') ||
-      appUrl.startsWith('facebook://') ||
-      appUrl.startsWith('intent:')
-    );
+  static markSocialTouchHandled(el) {
+    LinkRouter._socialTouchHandled = el;
+    window.setTimeout(() => {
+      if (LinkRouter._socialTouchHandled === el) {
+        LinkRouter._socialTouchHandled = null;
+      }
+    }, 400);
+  }
+
+  static consumeSocialTouchHandled(el) {
+    if (LinkRouter._socialTouchHandled === el) {
+      LinkRouter._socialTouchHandled = null;
+      return true;
+    }
+    return false;
+  }
+
+  static openSocialFromElement(el) {
+    if (!el) return;
+
+    const platform = el.getAttribute('data-contact');
+    const webUrl = el.getAttribute('data-web-href') || el.href;
+    const appUrl = el.getAttribute('data-app-href');
+    const launchUrl =
+      el.getAttribute('data-launch-href') ||
+      LinkRouter.resolveSocialLaunchUrl(platform, webUrl, appUrl);
+
+    if (!launchUrl || !webUrl) return;
+
+    const fallbackMs =
+      platform === 'facebook'
+        ? LinkRouter.FACEBOOK_FALLBACK_MS
+        : LinkRouter.SOCIAL_FALLBACK_MS;
+
+    LinkRouter.openWithAppFallback(launchUrl, webUrl, {
+      newTab: false,
+      fallbackMs
+    });
   }
 
   static tryOpenAppUrl(appUrl) {
     if (!appUrl) return;
 
     LinkRouter.markNavigation();
-
-    if (LinkRouter.requiresTopNavigation(appUrl) || LinkRouter.isAndroid()) {
-      window.location.assign(appUrl);
-      return;
-    }
-
-    if (LinkRouter.isIOS()) {
-      const iframe = document.createElement('iframe');
-      iframe.style.cssText = 'display:none;width:0;height:0;border:0';
-      iframe.setAttribute('aria-hidden', 'true');
-      iframe.tabIndex = -1;
-      iframe.src = appUrl;
-      document.body.appendChild(iframe);
-      window.setTimeout(() => iframe.remove(), 2000);
-      return;
-    }
-
     window.location.assign(appUrl);
   }
 
@@ -311,7 +331,11 @@ class LinkRouter {
       LinkRouter._activeNavigation.cleanup();
     }
 
-    LinkRouter.markNavigation();
+    if (appUrl) {
+      LinkRouter.tryOpenAppUrl(appUrl);
+    }
+
+    if (!webUrl) return;
 
     let settled = false;
 
@@ -329,7 +353,7 @@ class LinkRouter {
       cleanup();
       LinkRouter._activeNavigation = null;
 
-      if (openedApp || !webUrl) return;
+      if (openedApp) return;
 
       LinkRouter.markNavigation();
       if (newTab) {
@@ -353,46 +377,21 @@ class LinkRouter {
 
     LinkRouter._activeNavigation = { timer, cleanup };
 
-    if (appUrl) {
-      LinkRouter.tryOpenAppUrl(appUrl);
-    } else {
+    if (!appUrl) {
       settle(false);
     }
   }
 
   static openSocial(platform, appUrl, webUrl) {
-    if (platform === 'facebook') {
-      const normalizedWeb = LinkRouter.normalizeFacebookUrl(webUrl);
-
-      if (LinkRouter.isAndroid()) {
-        LinkRouter.openWithAppFallback(
-          LinkRouter.buildAndroidFacebookIntent(normalizedWeb),
-          normalizedWeb,
-          { newTab: false, fallbackMs: LinkRouter.FACEBOOK_FALLBACK_MS }
-        );
-        return;
-      }
-
-      const fbApp = LinkRouter.buildFacebookAppUrl(normalizedWeb);
-
-      LinkRouter.openWithAppFallback(fbApp, normalizedWeb, {
-        newTab: false,
-        fallbackMs: LinkRouter.FACEBOOK_FALLBACK_MS
-      });
-      return;
-    }
-
     const launchUrl = LinkRouter.resolveSocialLaunchUrl(platform, webUrl, appUrl);
-
-    if (LinkRouter.isAndroid() && launchUrl.startsWith('intent:')) {
-      LinkRouter.markNavigation();
-      window.location.assign(launchUrl);
-      return;
-    }
+    const fallbackMs =
+      platform === 'facebook'
+        ? LinkRouter.FACEBOOK_FALLBACK_MS
+        : LinkRouter.SOCIAL_FALLBACK_MS;
 
     LinkRouter.openWithAppFallback(launchUrl, webUrl, {
       newTab: false,
-      fallbackMs: LinkRouter.SOCIAL_FALLBACK_MS
+      fallbackMs
     });
   }
 
@@ -456,8 +455,7 @@ class LinkRouter {
       if (appHref && webHref) {
         event?.preventDefault();
         event?.stopPropagation();
-        window.FocusReset?.resetControlVisual?.(el);
-        LinkRouter.openSocial(key, appHref, webHref);
+        LinkRouter.openSocialFromElement(el);
         return true;
       }
     }
@@ -537,6 +535,10 @@ class LinkRouter {
       el.href = social[key].web;
       el.setAttribute('data-web-href', social[key].web);
       el.setAttribute('data-app-href', social[key].app);
+      el.setAttribute(
+        'data-launch-href',
+        LinkRouter.resolveSocialLaunchUrl(key, social[key].web, social[key].app)
+      );
       if (useDeepLinks) el.removeAttribute('target');
     });
   }
