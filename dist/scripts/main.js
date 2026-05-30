@@ -161,6 +161,10 @@ class BusinessCardApp {
    * Setup global event listeners
    */
   setupEventListeners() {
+    if (window.FocusReset) {
+      window.FocusReset.init();
+    }
+
     // Handle page visibility changes
     document.addEventListener('visibilitychange', () => {
       this.handleVisibilityChange();
@@ -178,12 +182,12 @@ class BusinessCardApp {
 
     // Handle errors
     window.addEventListener('error', (event) => {
-      this.handleError(event.error);
+      this.handleError(event.error, event);
     });
 
     // Handle unhandled promise rejections
     window.addEventListener('unhandledrejection', (event) => {
-      this.handleError(event.reason);
+      this.handleError(event.reason, event);
     });
   }
 
@@ -268,12 +272,17 @@ class BusinessCardApp {
 
   /**
    * Handle application errors
-   * @param {Error} error - The error that occurred
+   * @param {*} error - The error that occurred
+   * @param {ErrorEvent|PromiseRejectionEvent} [event]
    */
-  handleError(error) {
+  handleError(error, event) {
+    if (window.LinkRouter?.shouldSuppressError?.(error, event)) {
+      if (event?.preventDefault) event.preventDefault();
+      return;
+    }
+
     console.error('Application error:', error);
-    
-    // Log error for debugging
+
     if (this.toastManager) {
       this.toastManager.show('An error occurred. Please try again.');
     }

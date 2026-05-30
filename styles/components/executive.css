@@ -225,15 +225,22 @@
   --stat-value-end: var(--color-tech);
 }
 
-.stat-card:hover {
-  transform: translateY(-1px) scale(1.02);
-  box-shadow: var(--shadow-elevated);
-}
+@media (hover: hover) and (pointer: fine) {
+  .stat-card:hover {
+    transform: translateY(-1px) scale(1.02);
+    box-shadow: var(--shadow-elevated);
+  }
 
-.stat-card--accent:hover { border-color: rgba(243, 122, 53, 0.4); box-shadow: var(--shadow-glow); }
-.stat-card--tech:hover { border-color: rgba(34, 181, 217, 0.4); box-shadow: var(--shadow-glow-tech); }
-.stat-card--warm:hover { border-color: rgba(231, 159, 106, 0.4); }
-.stat-card--future:hover { border-color: rgba(118, 254, 255, 0.35); box-shadow: var(--shadow-glow-tech); }
+  .stat-card--accent:hover { border-color: rgba(243, 122, 53, 0.4); box-shadow: var(--shadow-glow); }
+  .stat-card--tech:hover { border-color: rgba(34, 181, 217, 0.4); box-shadow: var(--shadow-glow-tech); }
+  .stat-card--warm:hover { border-color: rgba(231, 159, 106, 0.4); }
+  .stat-card--future:hover { border-color: rgba(118, 254, 255, 0.35); box-shadow: var(--shadow-glow-tech); }
+
+  .stat-card:hover .stat-card__label {
+    color: var(--color-text-primary);
+    opacity: 1;
+  }
+}
 
 .stat-card__value {
   position: relative;
@@ -262,11 +269,6 @@
   letter-spacing: 0.05em;
   text-transform: uppercase;
   opacity: 0.92;
-}
-
-.stat-card:hover .stat-card__label {
-  color: var(--color-text-primary);
-  opacity: 1;
 }
 
 /* ========== Quick actions (below stats) ========== */

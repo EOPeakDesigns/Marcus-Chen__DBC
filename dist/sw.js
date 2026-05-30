@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-globals */
-const CACHE_VERSION = 'dbc-p9-vercel-deploy-v1';
+const CACHE_VERSION = 'dbc-p10-facebook-deeplink-v1';
 const CACHE_NAME = `digital-business-card-${CACHE_VERSION}`;
 const OFFLINE_URL = '/offline.html';
 

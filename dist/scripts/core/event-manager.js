@@ -12,13 +12,9 @@ class EventManager {
     this.copyButtons = [];
     this.contactPills = [];
     this.actionButtons = [];
-    this.linkRouter = window.LinkRouter || null;
     this.init();
   }
 
-  /**
-   * Initialize event listeners
-   */
   init() {
     this.setupCopyButtons();
     this.setupContactPills();
@@ -64,7 +60,7 @@ class EventManager {
     }
 
     if (action === 'open-qr') {
-      this.handleQRCodeClick();
+      this.handleQRCodeClick(button);
     }
   }
 
@@ -129,18 +125,28 @@ class EventManager {
    */
   setupContactPills() {
     this.contactPills = document.querySelectorAll(
-      '.action-row--link, .action-row__main[data-contact], .social-btn[data-contact]'
+      '.action-row--link[data-contact], .action-row__main[data-contact], .action-row__tool[data-contact], .social-btn[data-contact]'
     );
-    
+
     this.contactPills.forEach((pill) => {
       pill.addEventListener('click', (e) => {
-        if (this.linkRouter?.handleLinkClick(pill, e)) return;
+        const handled = LinkRouter.handleLinkClick(pill, e);
+        if (handled) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        if (!pill.classList.contains('social-btn')) {
+          window.FocusReset?.resetControlVisual?.(pill);
+        }
       });
 
       pill.addEventListener('keydown', (e) => {
         if ((e.key === 'Enter' || e.key === ' ') && e.target === pill) {
-          e.preventDefault();
-          if (this.linkRouter?.handleLinkClick(pill, e)) return;
+          if (LinkRouter.handleLinkClick(pill, e)) {
+            e.preventDefault();
+            window.FocusReset?.resetControlVisual?.(pill);
+            return;
+          }
           this.handlePillClick(pill);
         }
       });
@@ -202,18 +208,21 @@ class EventManager {
 
   /**
    * Handle QR code button click
+   * @param {HTMLElement} button
    */
-  handleQRCodeClick() {
-    // Open QR code modal through app instance
+  handleQRCodeClick(button) {
     if (window.app && window.app.qrModalManager) {
-      window.app.qrModalManager.open();
-    } else if (window.QRModalManager) {
-      // Fallback to direct class instantiation
-      const qrModal = new window.QRModalManager();
-      qrModal.open();
-    } else {
-      console.error('QR Modal Manager not available. Please ensure the application is properly initialized.');
+      window.app.qrModalManager.open(button);
+      return;
     }
+
+    if (window.QRModalManager) {
+      const qrModal = new window.QRModalManager();
+      qrModal.open(button);
+      return;
+    }
+
+    console.error('QR Modal Manager not available. Please ensure the application is properly initialized.');
   }
 
   /**

@@ -4,14 +4,16 @@
   fill: var(--color-accent-soft);
 }
 
-.smart-btn--qr:hover,
-.smart-btn--qr:focus-visible {
-  border-color: rgba(231, 159, 106, 0.45);
-  box-shadow: 0 0 20px rgba(243, 122, 53, 0.2);
+@media (hover: hover) and (pointer: fine) {
+  .smart-btn--qr:hover {
+    border-color: rgba(231, 159, 106, 0.45);
+    box-shadow: 0 0 20px rgba(243, 122, 53, 0.2);
+  }
 }
 
-.smart-btn--qr.modal-close-focus,
-.smart-btn--qr.modal-close-focus:focus-visible {
+.smart-btn--qr:focus-visible:not(.action-reset) {
+  border-color: rgba(231, 159, 106, 0.45);
+  box-shadow: 0 0 20px rgba(243, 122, 53, 0.2);
   outline: none;
 }
 

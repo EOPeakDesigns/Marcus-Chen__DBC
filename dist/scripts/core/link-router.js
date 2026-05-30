@@ -1,9 +1,13 @@
 /**
- * Mobile deep links — native apps first, web fallback
+ * Mobile deep links — native apps first, web fallback (Gmail web for email)
  */
 
 class LinkRouter {
-  static APP_FALLBACK_MS = 750;
+  static APP_FALLBACK_MS = 2200;
+  static SOCIAL_FALLBACK_MS = 2600;
+  static FACEBOOK_FALLBACK_MS = 3200;
+  static _suppressErrorsUntil = 0;
+  static _activeNavigation = null;
 
   static isMobile() {
     return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
@@ -25,41 +29,168 @@ class LinkRouter {
     return LinkRouter.isMobile() || LinkRouter.isCoarsePointer();
   }
 
-  /**
-   * @param {string} email
-   * @returns {string}
-   */
+  static shouldSuppressError(error, event) {
+    if (Date.now() < LinkRouter._suppressErrorsUntil) return true;
+    if (error?.name === 'AbortError') return true;
+
+    const message = String(
+      error?.message || event?.message || error || ''
+    ).toLowerCase();
+
+    const suppressed = [
+      'failed to launch',
+      'scheme does not have a registered handler',
+      'unknown protocol',
+      'not allowed to navigate',
+      'cancelled',
+      'canceled',
+      'user aborted',
+      'share',
+      'tel:',
+      'mailto:',
+      'googlegmail:',
+      'whatsapp:',
+      'linkedin:',
+      'instagram:',
+      'twitter:',
+      'fb:',
+      'facebook:',
+      'intent:',
+      'maps:',
+      'geo:'
+    ];
+
+    return suppressed.some((token) => message.includes(token));
+  }
+
+  static markNavigation() {
+    LinkRouter._suppressErrorsUntil = Date.now() + 2500;
+  }
+
   static buildGmailAppUrl(email) {
     return `googlegmail://co?to=${encodeURIComponent(email)}`;
   }
 
-  /**
-   * @param {string} email
-   * @returns {string}
-   */
-  static buildMailto(email) {
-    return `mailto:${email}`;
+  static buildGmailWebUrl(email) {
+    return `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}`;
   }
 
-  /**
-   * @param {string} email
-   * @returns {string}
-   */
   static buildAndroidGmailIntent(email) {
-    const mailto = LinkRouter.buildMailto(email);
+    const webFallback = LinkRouter.buildGmailWebUrl(email);
     const to = encodeURIComponent(email);
     return (
-      `intent://send/?to=${to}#Intent;` +
+      `intent://send?to=${to}#Intent;` +
       'scheme=mailto;' +
       'package=com.google.android.gm;' +
-      `S.browser_fallback_url=${encodeURIComponent(mailto)};end`
+      `S.browser_fallback_url=${encodeURIComponent(webFallback)};end`
     );
   }
 
+  static buildWhatsAppAppUrl(waUrl) {
+    if (!waUrl) return null;
+    const match = waUrl.match(/wa\.me\/(\d+)/i);
+    if (!match) return null;
+    return `whatsapp://send?phone=${match[1]}`;
+  }
+
+  static buildMapsUrls(mapsQuery, webUrl) {
+    const label = decodeURIComponent(String(mapsQuery || '').replace(/\+/g, ' '));
+    const encoded = encodeURIComponent(label);
+    return {
+      ios: `maps://?q=${encoded}`,
+      android: `geo:0,0?q=${encoded}`,
+      web: webUrl
+    };
+  }
+
+  static buildAndroidMapsIntent(webUrl) {
+    return LinkRouter.buildAndroidAppIntent(webUrl, 'com.google.android.apps.maps');
+  }
+
+  static resolveMapsLaunchUrl(webUrl, iosAppUrl) {
+    if (LinkRouter.isAndroid()) {
+      return LinkRouter.buildAndroidMapsIntent(webUrl);
+    }
+    return iosAppUrl;
+  }
+
   /**
-   * @param {object} contact
-   * @returns {Record<string, { web: string, app: string }>}
+   * Facebook web URLs must use www.facebook.com for reliable app handoff
+   * @param {string} webUrl
+   * @returns {string}
    */
+  static normalizeFacebookUrl(webUrl) {
+    try {
+      const url = new URL(webUrl);
+      url.protocol = 'https:';
+      url.hostname = url.hostname
+        .replace(/^m\./i, 'www.')
+        .replace(/^facebook\.com$/i, 'www.facebook.com')
+        .replace(/^fb\.com$/i, 'www.facebook.com');
+      if (/^facebook\.com$/i.test(url.hostname)) {
+        url.hostname = 'www.facebook.com';
+      }
+      if (!/^www\./i.test(url.hostname) && /facebook\.com$/i.test(url.hostname)) {
+        url.hostname = `www.${url.hostname}`;
+      }
+      return url.toString();
+    } catch {
+      return webUrl;
+    }
+  }
+
+  /**
+   * @param {string} webUrl
+   * @returns {string|null}
+   */
+  static extractFacebookSlug(webUrl) {
+    try {
+      const url = new URL(webUrl);
+      const id = url.searchParams.get('id');
+      if (id) return id;
+      const parts = url.pathname.replace(/^\/|\/$/g, '').split('/').filter(Boolean);
+      return parts[0] || null;
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * Facebook native app URL — fb:// scheme (not https intent)
+   * @param {string} webUrl
+   * @returns {string}
+   */
+  static buildFacebookAppUrl(webUrl) {
+    const normalized = LinkRouter.normalizeFacebookUrl(webUrl);
+    const slug = LinkRouter.extractFacebookSlug(normalized);
+
+    if (slug) {
+      return `fb://profile/${slug}`;
+    }
+
+    return `fb://facewebmodal/f?href=${encodeURIComponent(normalized)}`;
+  }
+
+  /**
+   * Android Facebook intent — no browser_fallback_url (avoids instant browser open)
+   * @param {string} webUrl
+   * @returns {string}
+   */
+  static buildAndroidFacebookIntent(webUrl) {
+    const normalized = LinkRouter.normalizeFacebookUrl(webUrl);
+    const slug = LinkRouter.extractFacebookSlug(normalized);
+    const fbPath = slug
+      ? `profile/${slug}`
+      : `facewebmodal/f?href=${encodeURIComponent(normalized)}`;
+
+    return (
+      `intent://${fbPath}#Intent;` +
+      'scheme=fb;' +
+      'package=com.facebook.katana;' +
+      'end'
+    );
+  }
+
   static buildSocialUrls(contact) {
     const map = {};
 
@@ -76,12 +207,10 @@ class LinkRouter {
     }
 
     if (contact?.facebook?.url) {
-      const web = contact.facebook.url;
+      const web = LinkRouter.normalizeFacebookUrl(contact.facebook.url);
       map.facebook = {
         web,
-        app:
-          contact.facebook.appUrl ||
-          `fb://facewebmodal/f?href=${encodeURIComponent(web)}`
+        app: contact.facebook.appUrl || LinkRouter.buildFacebookAppUrl(web)
       };
     }
 
@@ -112,112 +241,293 @@ class LinkRouter {
     return map;
   }
 
-  /**
-   * @param {string} appUrl
-   * @param {string} webUrl
-   * @param {object} options
-   */
+  static buildAndroidAppIntent(webUrl, packageName) {
+    const parsed = new URL(webUrl);
+    const path = `${parsed.host}${parsed.pathname}${parsed.search}`;
+    return (
+      `intent://${path}#Intent;` +
+      'scheme=https;' +
+      `package=${packageName};` +
+      `S.browser_fallback_url=${encodeURIComponent(webUrl)};end`
+    );
+  }
+
+  static resolveSocialLaunchUrl(platform, webUrl, iosAppUrl) {
+    if (platform === 'facebook') {
+      return LinkRouter.buildFacebookAppUrl(webUrl);
+    }
+
+    if (LinkRouter.isAndroid()) {
+      const packages = {
+        linkedin: 'com.linkedin.android',
+        instagram: 'com.instagram.android',
+        x: 'com.twitter.android'
+      };
+      const pkg = packages[platform];
+      if (pkg) return LinkRouter.buildAndroidAppIntent(webUrl, pkg);
+    }
+
+    return iosAppUrl;
+  }
+
+  static requiresTopNavigation(appUrl) {
+    return (
+      appUrl.startsWith('fb://') ||
+      appUrl.startsWith('facebook://') ||
+      appUrl.startsWith('intent:')
+    );
+  }
+
+  static tryOpenAppUrl(appUrl) {
+    if (!appUrl) return;
+
+    LinkRouter.markNavigation();
+
+    if (LinkRouter.requiresTopNavigation(appUrl) || LinkRouter.isAndroid()) {
+      window.location.assign(appUrl);
+      return;
+    }
+
+    if (LinkRouter.isIOS()) {
+      const iframe = document.createElement('iframe');
+      iframe.style.cssText = 'display:none;width:0;height:0;border:0';
+      iframe.setAttribute('aria-hidden', 'true');
+      iframe.tabIndex = -1;
+      iframe.src = appUrl;
+      document.body.appendChild(iframe);
+      window.setTimeout(() => iframe.remove(), 2000);
+      return;
+    }
+
+    window.location.assign(appUrl);
+  }
+
   static openWithAppFallback(appUrl, webUrl, options = {}) {
-    const { newTab = true } = options;
-    if (!appUrl || !webUrl) return;
+    const { newTab = false, fallbackMs = LinkRouter.APP_FALLBACK_MS } = options;
+    if (!webUrl && !appUrl) return;
 
-    let openedApp = false;
-    const timer = window.setTimeout(() => {
-      if (!openedApp) {
-        if (newTab) {
-          window.open(webUrl, '_blank', 'noopener,noreferrer');
-        } else {
-          window.location.href = webUrl;
-        }
+    if (LinkRouter._activeNavigation) {
+      window.clearTimeout(LinkRouter._activeNavigation.timer);
+      LinkRouter._activeNavigation.cleanup();
+    }
+
+    LinkRouter.markNavigation();
+
+    let settled = false;
+
+    const cleanup = () => {
+      document.removeEventListener('visibilitychange', onPageLeft);
+      window.removeEventListener('pagehide', onPageLeft);
+    };
+
+    const settle = (openedApp) => {
+      if (settled) return;
+      settled = true;
+      if (LinkRouter._activeNavigation?.timer) {
+        window.clearTimeout(LinkRouter._activeNavigation.timer);
       }
-    }, LinkRouter.APP_FALLBACK_MS);
+      cleanup();
+      LinkRouter._activeNavigation = null;
 
-    const onVisibility = () => {
-      if (document.hidden) {
-        openedApp = true;
-        window.clearTimeout(timer);
-        document.removeEventListener('visibilitychange', onVisibility);
-        window.removeEventListener('pagehide', onVisibility);
+      if (openedApp || !webUrl) return;
+
+      LinkRouter.markNavigation();
+      if (newTab) {
+        const win = window.open(webUrl, '_blank', 'noopener,noreferrer');
+        if (!win) window.location.assign(webUrl);
+      } else {
+        window.location.assign(webUrl);
       }
     };
 
-    document.addEventListener('visibilitychange', onVisibility);
-    window.addEventListener('pagehide', onVisibility);
+    const onPageLeft = () => {
+      if (document.hidden) settle(true);
+    };
 
-    window.location.href = appUrl;
+    document.addEventListener('visibilitychange', onPageLeft);
+    window.addEventListener('pagehide', () => settle(true));
+
+    const timer = window.setTimeout(() => {
+      if (!document.hidden) settle(false);
+    }, fallbackMs);
+
+    LinkRouter._activeNavigation = { timer, cleanup };
+
+    if (appUrl) {
+      LinkRouter.tryOpenAppUrl(appUrl);
+    } else {
+      settle(false);
+    }
   }
 
-  /**
-   * @param {string} email
-   */
+  static openSocial(platform, appUrl, webUrl) {
+    if (platform === 'facebook') {
+      const normalizedWeb = LinkRouter.normalizeFacebookUrl(webUrl);
+
+      if (LinkRouter.isAndroid()) {
+        LinkRouter.openWithAppFallback(
+          LinkRouter.buildAndroidFacebookIntent(normalizedWeb),
+          normalizedWeb,
+          { newTab: false, fallbackMs: LinkRouter.FACEBOOK_FALLBACK_MS }
+        );
+        return;
+      }
+
+      const fbApp = LinkRouter.buildFacebookAppUrl(normalizedWeb);
+
+      LinkRouter.openWithAppFallback(fbApp, normalizedWeb, {
+        newTab: false,
+        fallbackMs: LinkRouter.FACEBOOK_FALLBACK_MS
+      });
+      return;
+    }
+
+    const launchUrl = LinkRouter.resolveSocialLaunchUrl(platform, webUrl, appUrl);
+
+    if (LinkRouter.isAndroid() && launchUrl.startsWith('intent:')) {
+      LinkRouter.markNavigation();
+      window.location.assign(launchUrl);
+      return;
+    }
+
+    LinkRouter.openWithAppFallback(launchUrl, webUrl, {
+      newTab: false,
+      fallbackMs: LinkRouter.SOCIAL_FALLBACK_MS
+    });
+  }
+
+  static openAddress(iosAppUrl, webUrl) {
+    const launchUrl = LinkRouter.resolveMapsLaunchUrl(webUrl, iosAppUrl);
+
+    if (LinkRouter.isAndroid() && launchUrl.startsWith('intent:')) {
+      LinkRouter.markNavigation();
+      window.location.assign(launchUrl);
+      return;
+    }
+
+    LinkRouter.openWithAppFallback(launchUrl, webUrl, {
+      newTab: false,
+      fallbackMs: LinkRouter.SOCIAL_FALLBACK_MS
+    });
+  }
+
   static openEmail(email) {
     if (!email) return;
 
-    const mailto = LinkRouter.buildMailto(email);
-    const gmail = LinkRouter.buildGmailAppUrl(email);
+    const gmailWeb = LinkRouter.buildGmailWebUrl(email);
+    const gmailApp = LinkRouter.buildGmailAppUrl(email);
 
     if (!LinkRouter.shouldUseDeepLinks()) {
-      window.location.href = mailto;
+      LinkRouter.markNavigation();
+      window.open(gmailWeb, '_blank', 'noopener,noreferrer');
       return;
     }
 
     if (LinkRouter.isAndroid()) {
-      window.location.href = LinkRouter.buildAndroidGmailIntent(email);
+      LinkRouter.markNavigation();
+      window.location.assign(LinkRouter.buildAndroidGmailIntent(email));
       return;
     }
 
-    LinkRouter.openWithAppFallback(gmail, mailto, { newTab: false });
+    LinkRouter.openWithAppFallback(gmailApp, gmailWeb, { newTab: true });
   }
 
-  /**
-   * @param {HTMLElement} el
-   * @param {Event} event
-   * @returns {boolean} true if navigation was handled
-   */
-  handleLinkClick(el, event) {
-    if (!el || !LinkRouter.shouldUseDeepLinks()) return false;
+  static handleLinkClick(el, event) {
+    if (!el) return false;
 
     const key = el.getAttribute('data-contact');
     if (!key) return false;
 
     if (key === 'email') {
       event?.preventDefault();
+      event?.stopPropagation();
       const email =
         el.getAttribute('data-email') ||
-        (el.getAttribute('data-web-href') || '').replace(/^mailto:/i, '');
+        (el.getAttribute('data-web-href') || el.getAttribute('href') || '')
+          .replace(/^mailto:/i, '');
       LinkRouter.openEmail(email);
       return true;
     }
 
     const socialKeys = ['linkedin', 'facebook', 'instagram', 'x'];
-    if (socialKeys.includes(key)) {
+    if (socialKeys.includes(key) && LinkRouter.shouldUseDeepLinks()) {
       const appHref = el.getAttribute('data-app-href');
       const webHref = el.getAttribute('data-web-href') || el.href;
       if (appHref && webHref) {
         event?.preventDefault();
-        LinkRouter.openWithAppFallback(appHref, webHref);
+        event?.stopPropagation();
+        window.FocusReset?.resetControlVisual?.(el);
+        LinkRouter.openSocial(key, appHref, webHref);
         return true;
       }
+    }
+
+    if (key === 'address' && LinkRouter.shouldUseDeepLinks()) {
+      const webHref = el.getAttribute('data-web-href') || el.href;
+      const iosHref = el.getAttribute('data-app-href');
+      if (webHref && iosHref) {
+        event?.preventDefault();
+        event?.stopPropagation();
+        LinkRouter.openAddress(iosHref, webHref);
+        return true;
+      }
+    }
+
+    if (key === 'whatsapp' && LinkRouter.shouldUseDeepLinks()) {
+      const appHref = el.getAttribute('data-app-href');
+      const webHref = el.getAttribute('data-web-href') || el.href;
+      if (appHref && webHref) {
+        event?.preventDefault();
+        event?.stopPropagation();
+        LinkRouter.openWithAppFallback(appHref, webHref, { newTab: false });
+        return true;
+      }
+    }
+
+    if (key === 'phone') {
+      LinkRouter.markNavigation();
+      return false;
     }
 
     return false;
   }
 
-  /**
-   * Hydrate link elements from contact config
-   * @param {object} contact
-   */
   static applyToDom(contact) {
     if (!contact) return;
+
+    const useDeepLinks = LinkRouter.shouldUseDeepLinks();
 
     const email = contact.email;
     const emailEl = document.querySelector('[data-contact="email"]');
     if (emailEl && email) {
-      const mailto = LinkRouter.buildMailto(email);
-      emailEl.href = mailto;
-      emailEl.setAttribute('data-web-href', mailto);
+      const gmailWeb = LinkRouter.buildGmailWebUrl(email);
+      emailEl.href = gmailWeb;
+      emailEl.setAttribute('data-web-href', gmailWeb);
       emailEl.setAttribute('data-email', email);
       emailEl.setAttribute('data-gmail-href', LinkRouter.buildGmailAppUrl(email));
+    }
+
+    const waEl = document.querySelector('[data-contact="whatsapp"]');
+    if (waEl) {
+      const web = contact.whatsapp?.url || waEl.href;
+      const app = LinkRouter.buildWhatsAppAppUrl(web);
+      waEl.href = web;
+      waEl.setAttribute('data-web-href', web);
+      if (app) waEl.setAttribute('data-app-href', app);
+      if (useDeepLinks) waEl.removeAttribute('target');
+    }
+
+    const addrEl = document.querySelector('[data-contact="address"]');
+    if (addrEl && contact.address) {
+      const web =
+        addrEl.getAttribute('data-web-href') ||
+        addrEl.href ||
+        `https://www.google.com/maps/search/?api=1&query=${contact.address.mapsQuery}`;
+      const maps = LinkRouter.buildMapsUrls(contact.address.mapsQuery, web);
+      addrEl.href = web;
+      addrEl.setAttribute('data-web-href', web);
+      addrEl.setAttribute('data-app-href', maps.ios);
+      if (useDeepLinks) addrEl.removeAttribute('target');
     }
 
     const social = LinkRouter.buildSocialUrls(contact);
@@ -227,6 +537,7 @@ class LinkRouter {
       el.href = social[key].web;
       el.setAttribute('data-web-href', social[key].web);
       el.setAttribute('data-app-href', social[key].app);
+      if (useDeepLinks) el.removeAttribute('target');
     });
   }
 }

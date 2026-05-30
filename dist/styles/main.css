@@ -13,6 +13,7 @@
 @import url('./components/toast-notification.css');
 @import url('./components/install-banner.css');
 @import url('./components/mobile-card.css');
+@import url('./components/touch-interaction.css');
 
 .app {
   min-height: 100vh;

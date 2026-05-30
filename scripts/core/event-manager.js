@@ -134,9 +134,9 @@ class EventManager {
         if (handled) {
           e.preventDefault();
           e.stopPropagation();
-          if (!pill.classList.contains('social-btn')) {
-            window.FocusReset?.resetControlVisual?.(pill);
-          }
+        }
+        if (!pill.classList.contains('social-btn')) {
+          window.FocusReset?.resetControlVisual?.(pill);
         }
       });
 

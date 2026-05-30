@@ -6,8 +6,10 @@
   right: max(12px, env(safe-area-inset-right));
   bottom: max(12px, env(safe-area-inset-bottom));
   left: auto;
+  top: auto;
   width: min(360px, calc(100vw - 24px - env(safe-area-inset-left) - env(safe-area-inset-right)));
-  max-width: 100%;
+  max-width: calc(100vw - 24px - env(safe-area-inset-left) - env(safe-area-inset-right));
+  margin: 0;
 }
 
 .install-banner[hidden] {
@@ -142,17 +144,20 @@
   .install-banner {
     right: max(10px, env(safe-area-inset-right));
     bottom: max(10px, env(safe-area-inset-bottom));
-    left: max(10px, env(safe-area-inset-left));
-    width: auto;
+    left: auto;
+    top: auto;
+    width: min(340px, calc(100vw - 20px - env(safe-area-inset-left) - env(safe-area-inset-right)));
+    max-width: calc(100vw - 20px - env(safe-area-inset-left) - env(safe-area-inset-right));
   }
 
   .install-banner__actions {
-    flex-direction: column;
+    flex-direction: row;
   }
 
   .install-banner__btn {
-    flex: none;
-    width: 100%;
+    flex: 1;
+    width: auto;
+    min-width: 0;
   }
 }
 

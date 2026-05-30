@@ -5,6 +5,7 @@
 class LinkRouter {
   static APP_FALLBACK_MS = 2200;
   static SOCIAL_FALLBACK_MS = 2600;
+  static FACEBOOK_FALLBACK_MS = 3200;
   static _suppressErrorsUntil = 0;
   static _activeNavigation = null;
 
@@ -28,11 +29,6 @@ class LinkRouter {
     return LinkRouter.isMobile() || LinkRouter.isCoarsePointer();
   }
 
-  /**
-   * @param {*} error
-   * @param {ErrorEvent|PromiseRejectionEvent} [event]
-   * @returns {boolean}
-   */
   static shouldSuppressError(error, event) {
     if (Date.now() < LinkRouter._suppressErrorsUntil) return true;
     if (error?.name === 'AbortError') return true;
@@ -58,6 +54,7 @@ class LinkRouter {
       'instagram:',
       'twitter:',
       'fb:',
+      'facebook:',
       'intent:',
       'maps:',
       'geo:'
@@ -76,10 +73,6 @@ class LinkRouter {
 
   static buildGmailWebUrl(email) {
     return `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}`;
-  }
-
-  static buildMailto(email) {
-    return `mailto:${email}`;
   }
 
   static buildAndroidGmailIntent(email) {
@@ -110,25 +103,92 @@ class LinkRouter {
     };
   }
 
-  /**
-   * Android — Google Maps app OR browser fallback (single navigation)
-   * @param {string} webUrl
-   * @returns {string}
-   */
   static buildAndroidMapsIntent(webUrl) {
     return LinkRouter.buildAndroidAppIntent(webUrl, 'com.google.android.apps.maps');
   }
 
-  /**
-   * @param {string} webUrl
-   * @param {string} iosAppUrl
-   * @returns {string}
-   */
   static resolveMapsLaunchUrl(webUrl, iosAppUrl) {
     if (LinkRouter.isAndroid()) {
       return LinkRouter.buildAndroidMapsIntent(webUrl);
     }
     return iosAppUrl;
+  }
+
+  /**
+   * Facebook web URLs must use www.facebook.com for reliable app handoff
+   * @param {string} webUrl
+   * @returns {string}
+   */
+  static normalizeFacebookUrl(webUrl) {
+    try {
+      const url = new URL(webUrl);
+      url.protocol = 'https:';
+      url.hostname = url.hostname
+        .replace(/^m\./i, 'www.')
+        .replace(/^facebook\.com$/i, 'www.facebook.com')
+        .replace(/^fb\.com$/i, 'www.facebook.com');
+      if (/^facebook\.com$/i.test(url.hostname)) {
+        url.hostname = 'www.facebook.com';
+      }
+      if (!/^www\./i.test(url.hostname) && /facebook\.com$/i.test(url.hostname)) {
+        url.hostname = `www.${url.hostname}`;
+      }
+      return url.toString();
+    } catch {
+      return webUrl;
+    }
+  }
+
+  /**
+   * @param {string} webUrl
+   * @returns {string|null}
+   */
+  static extractFacebookSlug(webUrl) {
+    try {
+      const url = new URL(webUrl);
+      const id = url.searchParams.get('id');
+      if (id) return id;
+      const parts = url.pathname.replace(/^\/|\/$/g, '').split('/').filter(Boolean);
+      return parts[0] || null;
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * Facebook native app URL — fb:// scheme (not https intent)
+   * @param {string} webUrl
+   * @returns {string}
+   */
+  static buildFacebookAppUrl(webUrl) {
+    const normalized = LinkRouter.normalizeFacebookUrl(webUrl);
+    const slug = LinkRouter.extractFacebookSlug(normalized);
+
+    if (slug) {
+      return `fb://profile/${slug}`;
+    }
+
+    return `fb://facewebmodal/f?href=${encodeURIComponent(normalized)}`;
+  }
+
+  /**
+   * Android Facebook intent — no browser_fallback_url (avoids instant browser open)
+   * @param {string} webUrl
+   * @returns {string}
+   */
+  static buildAndroidFacebookIntent(webUrl) {
+    const normalized = LinkRouter.normalizeFacebookUrl(webUrl);
+    const slug = LinkRouter.extractFacebookSlug(normalized);
+    const fbPath = slug
+      ? `profile/${slug}`
+      : `facewebmodal/f?href=${encodeURIComponent(normalized)}`;
+
+    return (
+      `intent://${fbPath}#Intent;` +
+      'scheme=fb;' +
+      'package=com.facebook.katana;' +
+      'end'
+    );
   }
 
   static buildSocialUrls(contact) {
@@ -147,10 +207,10 @@ class LinkRouter {
     }
 
     if (contact?.facebook?.url) {
-      const web = contact.facebook.url;
+      const web = LinkRouter.normalizeFacebookUrl(contact.facebook.url);
       map.facebook = {
         web,
-        app: contact.facebook.appUrl || `fb://facewebmodal/f?href=${encodeURIComponent(web)}`
+        app: contact.facebook.appUrl || LinkRouter.buildFacebookAppUrl(web)
       };
     }
 
@@ -193,17 +253,29 @@ class LinkRouter {
   }
 
   static resolveSocialLaunchUrl(platform, webUrl, iosAppUrl) {
+    if (platform === 'facebook') {
+      return LinkRouter.buildFacebookAppUrl(webUrl);
+    }
+
     if (LinkRouter.isAndroid()) {
       const packages = {
         linkedin: 'com.linkedin.android',
-        facebook: 'com.facebook.katana',
         instagram: 'com.instagram.android',
         x: 'com.twitter.android'
       };
       const pkg = packages[platform];
       if (pkg) return LinkRouter.buildAndroidAppIntent(webUrl, pkg);
     }
+
     return iosAppUrl;
+  }
+
+  static requiresTopNavigation(appUrl) {
+    return (
+      appUrl.startsWith('fb://') ||
+      appUrl.startsWith('facebook://') ||
+      appUrl.startsWith('intent:')
+    );
   }
 
   static tryOpenAppUrl(appUrl) {
@@ -211,7 +283,12 @@ class LinkRouter {
 
     LinkRouter.markNavigation();
 
-    if (LinkRouter.isIOS() && !appUrl.startsWith('intent:')) {
+    if (LinkRouter.requiresTopNavigation(appUrl) || LinkRouter.isAndroid()) {
+      window.location.assign(appUrl);
+      return;
+    }
+
+    if (LinkRouter.isIOS()) {
       const iframe = document.createElement('iframe');
       iframe.style.cssText = 'display:none;width:0;height:0;border:0';
       iframe.setAttribute('aria-hidden', 'true');
@@ -225,9 +302,6 @@ class LinkRouter {
     window.location.assign(appUrl);
   }
 
-  /**
-   * App first — web only if the page stays visible (app not installed)
-   */
   static openWithAppFallback(appUrl, webUrl, options = {}) {
     const { newTab = false, fallbackMs = LinkRouter.APP_FALLBACK_MS } = options;
     if (!webUrl && !appUrl) return;
@@ -286,10 +360,28 @@ class LinkRouter {
     }
   }
 
-  /**
-   * Social — one destination only (Android intent OR iOS app scheme + timed fallback)
-   */
   static openSocial(platform, appUrl, webUrl) {
+    if (platform === 'facebook') {
+      const normalizedWeb = LinkRouter.normalizeFacebookUrl(webUrl);
+
+      if (LinkRouter.isAndroid()) {
+        LinkRouter.openWithAppFallback(
+          LinkRouter.buildAndroidFacebookIntent(normalizedWeb),
+          normalizedWeb,
+          { newTab: false, fallbackMs: LinkRouter.FACEBOOK_FALLBACK_MS }
+        );
+        return;
+      }
+
+      const fbApp = LinkRouter.buildFacebookAppUrl(normalizedWeb);
+
+      LinkRouter.openWithAppFallback(fbApp, normalizedWeb, {
+        newTab: false,
+        fallbackMs: LinkRouter.FACEBOOK_FALLBACK_MS
+      });
+      return;
+    }
+
     const launchUrl = LinkRouter.resolveSocialLaunchUrl(platform, webUrl, appUrl);
 
     if (LinkRouter.isAndroid() && launchUrl.startsWith('intent:')) {
@@ -304,11 +396,6 @@ class LinkRouter {
     });
   }
 
-  /**
-   * Office location — Maps app first, Google Maps web only if app unavailable
-   * @param {string} iosAppUrl
-   * @param {string} webUrl
-   */
   static openAddress(iosAppUrl, webUrl) {
     const launchUrl = LinkRouter.resolveMapsLaunchUrl(webUrl, iosAppUrl);
 
@@ -440,9 +527,7 @@ class LinkRouter {
       addrEl.href = web;
       addrEl.setAttribute('data-web-href', web);
       addrEl.setAttribute('data-app-href', maps.ios);
-      if (useDeepLinks) {
-        addrEl.removeAttribute('target');
-      }
+      if (useDeepLinks) addrEl.removeAttribute('target');
     }
 
     const social = LinkRouter.buildSocialUrls(contact);
@@ -452,9 +537,7 @@ class LinkRouter {
       el.href = social[key].web;
       el.setAttribute('data-web-href', social[key].web);
       el.setAttribute('data-app-href', social[key].app);
-      if (useDeepLinks) {
-        el.removeAttribute('target');
-      }
+      if (useDeepLinks) el.removeAttribute('target');
     });
   }
 }
