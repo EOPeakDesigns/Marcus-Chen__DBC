@@ -120,11 +120,24 @@ git push -u origin main
 
 1. Go to [vercel.com/new](https://vercel.com/new).
 2. Import your GitHub repository.
-3. **Framework Preset:** Other (static site).
-4. **Root Directory:** `.` (project root).
-5. **Build Command:** leave empty.
-6. **Output Directory:** leave empty (Vercel serves static files from root).
-7. Deploy.
+3. **Framework Preset:** **Other** (not Next.js).
+4. **Root Directory:** leave **empty** (repo root must contain `index.html` + `vercel.json`).
+5. **Build Command / Output Directory:** leave dashboard overrides **OFF** — `vercel.json` runs `npm run build` and publishes **`dist/`**.
+6. Deploy.
+
+> **404 fix:** Do **not** commit a `public/` folder without `index.html` inside it. Vercel treats `public/` as the site root and you get `404 NOT_FOUND`. See [docs/VERCEL-404-FIX.md](docs/VERCEL-404-FIX.md).
+
+**Local test before push:**
+
+```bash
+npm install
+npm run build
+npm run preview
+```
+
+Open the URL shown (serves `dist/`). If the card loads locally, Vercel will work after push.
+
+**After deploy:** open `https://your-site.vercel.app/health.txt` — you should see `deploy-root-ok`.
 
 `vercel.json` is already configured for:
 
@@ -194,6 +207,7 @@ Vercel → Project → **Settings → Domains** → add your domain and follow D
 | Video blank on iPhone | YouTube embed loads on open only; close modal and retry |
 | Stale content after update | Bump `CACHE_VERSION` in `sw.js`, redeploy, hard refresh |
 | `og:image` wrong on Slack/iMessage | Set `meta.siteUrl` in `card.json` to production URL |
+| **`404: NOT_FOUND` on Vercel** | Delete `public/` from GitHub; push latest `vercel.json` + build script; redeploy with cache cleared; see [docs/VERCEL-404-FIX.md](docs/VERCEL-404-FIX.md) |
 
 ---
 
