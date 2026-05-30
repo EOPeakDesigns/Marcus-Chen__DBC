@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "build": "node scripts/generate-pwa-icons.mjs",
     "icons": "node scripts/generate-pwa-icons.mjs"
   },
   "devDependencies": {
