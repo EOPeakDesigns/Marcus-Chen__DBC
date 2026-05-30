@@ -12,11 +12,22 @@
 
 @media (hover: none), (pointer: coarse) {
   .action-row--compound:hover,
+  .action-row--compound:focus-within,
+  .action-row--compound:focus-within:has(:focus-visible),
   .action-row__main:hover {
     transform: none;
     box-shadow: none;
     border-color: var(--color-border);
     background: transparent;
+  }
+
+  .action-row__main:focus,
+  .action-row__main:focus-visible,
+  .action-row__main:active {
+    background: transparent !important;
+    opacity: 1 !important;
+    transform: none !important;
+    outline: none !important;
   }
 
   .smart-btn:hover,
@@ -109,7 +120,6 @@
   .showcase-play-btn:active,
   .social-btn:active,
   .action-row--link:active,
-  .action-row__main:active,
   .stat-card:active {
     transform: scale(0.98);
     opacity: 0.88;
@@ -172,6 +182,7 @@
 .action-row__main.action-reset:hover,
 .action-row__main.action-reset:focus,
 .action-row__main.action-reset:focus-visible,
+.action-row__main.action-reset:active,
 .action-row--link.action-reset,
 .action-row--link.action-reset:hover,
 .action-row--link.action-reset:focus,
@@ -185,7 +196,8 @@
 
 .action-row--compound.action-reset,
 .action-row--compound.action-reset:hover,
-.action-row--compound.action-reset:focus-within {
+.action-row--compound.action-reset:focus-within,
+.action-row--compound.action-reset:focus-within:has(:focus-visible) {
   border-color: var(--color-border) !important;
   box-shadow: none !important;
 }

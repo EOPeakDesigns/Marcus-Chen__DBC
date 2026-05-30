@@ -136,7 +136,13 @@ class EventManager {
           e.stopPropagation();
         }
         if (!pill.classList.contains('social-btn')) {
-          window.FocusReset?.resetControlVisual?.(pill);
+          if (
+            pill.matches('.action-row__main[data-contact="phone"], .action-row__main[data-contact="email"]')
+          ) {
+            window.FocusReset?.resetCompoundMain?.(pill);
+          } else {
+            window.FocusReset?.resetControlVisual?.(pill);
+          }
         }
       });
 

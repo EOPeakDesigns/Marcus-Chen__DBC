@@ -305,12 +305,12 @@
   transition: border-color var(--transition-normal), box-shadow var(--transition-normal);
 }
 
-.action-row--compound:focus-within:has(:focus-visible) {
-  border-color: rgba(34, 181, 217, 0.3);
-  box-shadow: var(--shadow-glow-tech);
-}
-
 @media (hover: hover) and (pointer: fine) {
+  .action-row--compound:focus-within:has(:focus-visible) {
+    border-color: rgba(34, 181, 217, 0.3);
+    box-shadow: var(--shadow-glow-tech);
+  }
+
   .action-row--compound:hover {
     border-color: rgba(34, 181, 217, 0.3);
     box-shadow: var(--shadow-glow-tech);
@@ -333,11 +333,11 @@
   .action-row__main:hover {
     background: rgba(255, 255, 255, 0.03);
   }
-}
 
-.action-row__main:focus-visible {
-  background: rgba(255, 255, 255, 0.03);
-  outline: none;
+  .action-row__main:focus-visible {
+    background: rgba(255, 255, 255, 0.03);
+    outline: none;
+  }
 }
 
 .action-row__tools {
