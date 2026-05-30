@@ -369,6 +369,7 @@ class LinkRouter {
       if (appHref && webHref) {
         event?.preventDefault();
         event?.stopPropagation();
+        window.FocusReset?.resetControlVisual?.(el);
         LinkRouter.openSocial(key, appHref, webHref);
         return true;
       }

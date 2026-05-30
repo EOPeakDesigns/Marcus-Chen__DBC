@@ -2,6 +2,7 @@
 
 .smart-btn,
 .showcase-play-btn,
+.social-btn,
 .action-row--link,
 .action-row__main,
 .action-row__tool {
@@ -50,8 +51,30 @@
       0 2px 8px rgba(0, 0, 0, 0.35);
   }
 
+  .social-btn:hover,
+  .social-btn--linkedin:hover,
+  .social-btn--facebook:hover,
+  .social-btn--instagram:hover,
+  .social-btn--x:hover,
+  .social-btn:focus:not(:focus-visible) {
+    transform: none;
+    border-color: var(--color-border);
+    background: var(--color-bg-secondary);
+    box-shadow: none;
+  }
+
+  .social-btn:hover svg,
+  .social-btn--linkedin:hover svg,
+  .social-btn--facebook:hover svg,
+  .social-btn--instagram:hover svg,
+  .social-btn--x:hover svg,
+  .social-btn:focus:not(:focus-visible) svg {
+    fill: var(--color-text-secondary);
+  }
+
   .smart-btn:active,
   .showcase-play-btn:active,
+  .social-btn:active,
   .action-row--link:active,
   .action-row__main:active {
     transform: scale(0.98);
@@ -91,4 +114,22 @@
     0 0 0 2px var(--color-surface),
     0 4px 14px var(--color-glow),
     0 2px 8px rgba(0, 0, 0, 0.35) !important;
+}
+
+.social-btn.action-reset,
+.social-btn.action-reset:hover,
+.social-btn.action-reset:focus,
+.social-btn.action-reset:focus-visible {
+  transform: none !important;
+  border-color: var(--color-border) !important;
+  box-shadow: none !important;
+  outline: none !important;
+  background: var(--color-bg-secondary) !important;
+}
+
+.social-btn.action-reset svg,
+.social-btn.action-reset:hover svg,
+.social-btn.action-reset:focus svg,
+.social-btn.action-reset:focus-visible svg {
+  fill: var(--color-text-secondary) !important;
 }

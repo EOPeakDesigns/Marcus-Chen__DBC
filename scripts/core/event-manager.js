@@ -130,10 +130,13 @@ class EventManager {
 
     this.contactPills.forEach((pill) => {
       pill.addEventListener('click', (e) => {
-        if (LinkRouter.handleLinkClick(pill, e)) {
+        const handled = LinkRouter.handleLinkClick(pill, e);
+        if (handled) {
           e.preventDefault();
           e.stopPropagation();
-          window.FocusReset?.resetControlVisual?.(pill);
+          if (!pill.classList.contains('social-btn')) {
+            window.FocusReset?.resetControlVisual?.(pill);
+          }
         }
       });
 

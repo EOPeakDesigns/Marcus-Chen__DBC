@@ -709,57 +709,94 @@
   transition: fill var(--transition-normal);
 }
 
-.social-btn:hover,
-.social-btn:focus-visible {
+@media (hover: hover) and (pointer: fine) {
+  .social-btn:hover {
+    transform: scale(1.04);
+  }
+
+  .social-btn--linkedin:hover {
+    border-color: rgba(10, 102, 194, 0.5);
+    background: rgba(10, 102, 194, 0.12);
+    box-shadow: 0 4px 14px rgba(10, 102, 194, 0.2);
+  }
+
+  .social-btn--linkedin:hover svg {
+    fill: #0a66c2;
+  }
+
+  .social-btn--facebook:hover {
+    border-color: rgba(24, 119, 242, 0.5);
+    background: rgba(24, 119, 242, 0.12);
+    box-shadow: 0 4px 14px rgba(24, 119, 242, 0.2);
+  }
+
+  .social-btn--facebook:hover svg {
+    fill: #1877f2;
+  }
+
+  .social-btn--instagram:hover {
+    border-color: rgba(225, 48, 108, 0.5);
+    background: rgba(225, 48, 108, 0.1);
+    box-shadow: 0 4px 14px rgba(225, 48, 108, 0.2);
+  }
+
+  .social-btn--instagram:hover svg {
+    fill: #e1306c;
+  }
+
+  .social-btn--x:hover {
+    border-color: rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  }
+
+  .social-btn--x:hover svg {
+    fill: var(--color-text-primary);
+  }
+}
+
+.social-btn:focus-visible:not(.action-reset) {
   transform: scale(1.04);
   outline: none;
 }
 
-.social-btn--linkedin:hover,
-.social-btn--linkedin:focus-visible {
+.social-btn--linkedin:focus-visible:not(.action-reset) {
   border-color: rgba(10, 102, 194, 0.5);
   background: rgba(10, 102, 194, 0.12);
   box-shadow: 0 4px 14px rgba(10, 102, 194, 0.2);
 }
 
-.social-btn--linkedin:hover svg,
-.social-btn--linkedin:focus-visible svg {
+.social-btn--linkedin:focus-visible:not(.action-reset) svg {
   fill: #0a66c2;
 }
 
-.social-btn--facebook:hover,
-.social-btn--facebook:focus-visible {
+.social-btn--facebook:focus-visible:not(.action-reset) {
   border-color: rgba(24, 119, 242, 0.5);
   background: rgba(24, 119, 242, 0.12);
   box-shadow: 0 4px 14px rgba(24, 119, 242, 0.2);
 }
 
-.social-btn--facebook:hover svg,
-.social-btn--facebook:focus-visible svg {
+.social-btn--facebook:focus-visible:not(.action-reset) svg {
   fill: #1877f2;
 }
 
-.social-btn--instagram:hover,
-.social-btn--instagram:focus-visible {
+.social-btn--instagram:focus-visible:not(.action-reset) {
   border-color: rgba(225, 48, 108, 0.5);
   background: rgba(225, 48, 108, 0.1);
   box-shadow: 0 4px 14px rgba(225, 48, 108, 0.2);
 }
 
-.social-btn--instagram:hover svg,
-.social-btn--instagram:focus-visible svg {
+.social-btn--instagram:focus-visible:not(.action-reset) svg {
   fill: #e1306c;
 }
 
-.social-btn--x:hover,
-.social-btn--x:focus-visible {
+.social-btn--x:focus-visible:not(.action-reset) {
   border-color: rgba(255, 255, 255, 0.25);
   background: rgba(255, 255, 255, 0.08);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
 }
 
-.social-btn--x:hover svg,
-.social-btn--x:focus-visible svg {
+.social-btn--x:focus-visible:not(.action-reset) svg {
   fill: var(--color-text-primary);
 }
 

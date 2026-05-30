@@ -6,6 +6,7 @@ const FocusReset = (() => {
   const SELECTOR = [
     '.smart-btn',
     '.showcase-play-btn',
+    '.social-btn',
     '.action-row__main',
     '.action-row--link'
   ].join(', ');
@@ -46,9 +47,14 @@ const FocusReset = (() => {
     el.classList.add('action-reset');
     blurElement(el);
 
+    const holdMs = window.matchMedia('(hover: none), (pointer: coarse)').matches ? 450 : 0;
+
     requestAnimationFrame(() => {
-      el.classList.remove('action-reset');
       blurElement(el);
+      window.setTimeout(() => {
+        el.classList.remove('action-reset');
+        blurElement(el);
+      }, holdMs);
     });
   }
 
