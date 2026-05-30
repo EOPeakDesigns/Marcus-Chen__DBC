@@ -132,8 +132,8 @@ class EventManager {
       pill.addEventListener('click', (e) => {
         if (LinkRouter.handleLinkClick(pill, e)) {
           e.preventDefault();
+          e.stopPropagation();
           window.FocusReset?.resetControlVisual?.(pill);
-          return;
         }
       });
 
