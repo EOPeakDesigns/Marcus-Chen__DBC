@@ -3,8 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "node scripts/generate-pwa-icons.mjs",
-    "icons": "node scripts/generate-pwa-icons.mjs"
+    "build": "node scripts/vercel-build.mjs",
+    "icons": "node scripts/generate-pwa-icons.mjs",
+    "preview": "npm run build && npx serve dist"
   },
   "devDependencies": {
     "sharp": "^0.33.5"

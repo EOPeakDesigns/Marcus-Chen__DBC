@@ -1,0 +1,1045 @@
+/* ========================================
+   Enhanced Responsive Design Styles
+   ======================================== */
+
+/* Ultra-small mobile devices (320px - 375px) */
+@media (max-width: 375px) {
+  .card {
+    width: var(--card-width-mobile);
+    margin: var(--spacing-fluid-sm) auto;
+    border-radius: var(--radius-md);
+  }
+  
+  /* Smart ornament positioning for ultra-small screens */
+  .corner-ornament {
+    width: var(--ornament-size-mobile);
+    height: var(--ornament-size-mobile);
+  }
+  
+  /* Unified corner positioning for ultra-small screens */
+  .top-left,
+  .top-right {
+    top: var(--ornament-corner-mobile);
+  }
+  
+  .top-left,
+  .bottom-left {
+    left: var(--ornament-corner-mobile);
+  }
+  
+  .top-right,
+  .bottom-right {
+    right: var(--ornament-corner-mobile);
+  }
+  
+  .bottom-left,
+  .bottom-right {
+    bottom: var(--ornament-corner-mobile);
+  }
+  
+  .profile {
+    padding: var(--spacing-fluid-lg) var(--spacing-fluid-sm) var(--spacing-fluid-md);
+  }
+  
+  .profile-image-container {
+    width: 80px;
+    height: 80px;
+    border-width: 1px;
+    padding: 2px;
+    box-shadow: 
+      0 4px 16px rgba(214, 155, 73, 0.1),
+      0 2px 8px rgba(0, 0, 0, 0.06),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+
+  :root {
+    --profile-image-scale: 2.15;
+    --profile-image-object-position: center 20%;
+    --profile-image-transform-origin: center top;
+  }
+  
+  /* QR Code Button - Ultra-small mobile */
+  .qr-code-btn {
+    min-width: var(--touch-target-min);
+    min-height: var(--touch-target-min);
+    top: -10px;
+    right: -10px;
+  }
+  
+  .qr-icon {
+    width: 12px;
+    height: 12px;
+  }
+  
+  .profile-name {
+    font-size: var(--font-size-fluid-2xl);
+    margin-bottom: var(--spacing-fluid-xs);
+  }
+  
+  .profile-title {
+    font-size: var(--font-size-fluid-sm);
+  }
+  
+  .profile-description {
+    font-size: var(--font-size-fluid-xs);
+    max-width: 200px;
+    margin-top: var(--spacing-fluid-xs);
+    line-height: 1.4;
+  }
+  
+  .contact-list {
+    padding: 0 var(--spacing-fluid-sm) var(--contact-list-bottom-mobile);
+    gap: var(--spacing-fluid-sm);
+  }
+  
+  .contact-pill {
+    height: var(--touch-target-min);
+    border-radius: 24px;
+  }
+  
+  .icon-container {
+    width: 32px;
+    height: 32px;
+    margin-left: var(--spacing-fluid-sm);
+  }
+  
+  .contact-icon {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .contact-text {
+    margin-left: var(--spacing-fluid-sm);
+  }
+  
+  .contact-label {
+    font-size: var(--font-size-fluid-xs);
+  }
+  
+  .contact-value {
+    font-size: 10px;
+  }
+  
+  .copy-btn {
+    width: 28px;
+    height: 28px;
+    margin-right: var(--spacing-fluid-xs);
+  }
+  
+  .copy-icon,
+  .success-icon {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .chevron {
+    width: 14px;
+    height: 14px;
+    margin-right: var(--spacing-fluid-sm);
+  }
+}
+
+/* Small mobile devices (376px - 480px) */
+@media (min-width: 376px) and (max-width: 480px) {
+  .card {
+    width: var(--card-width-mobile);
+    margin: var(--spacing-fluid-sm) auto;
+  }
+  
+  /* Smart ornament positioning for small mobile screens */
+  .corner-ornament {
+    width: var(--ornament-size-mobile);
+    height: var(--ornament-size-mobile);
+  }
+  
+  /* Unified corner positioning for small mobile screens */
+  .top-left,
+  .top-right {
+    top: var(--ornament-corner-mobile);
+  }
+  
+  .top-left,
+  .bottom-left {
+    left: var(--ornament-corner-mobile);
+  }
+  
+  .top-right,
+  .bottom-right {
+    right: var(--ornament-corner-mobile);
+  }
+  
+  .bottom-left,
+  .bottom-right {
+    bottom: var(--ornament-corner-mobile);
+  }
+  
+  .profile {
+    padding: var(--spacing-fluid-lg) var(--spacing-fluid-sm) var(--spacing-fluid-md);
+  }
+  
+  .profile-image-container {
+    width: 90px;
+    height: 90px;
+    border-width: 1px;
+    box-shadow: 
+      0 6px 24px rgba(214, 155, 73, 0.12),
+      0 3px 12px rgba(0, 0, 0, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+  
+  /* QR Code Button - Small mobile */
+  .qr-code-btn {
+    min-width: var(--touch-target-min);
+    min-height: var(--touch-target-min);
+    top: -10px;
+    right: -10px;
+  }
+  
+  .qr-icon {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .profile-image-container:hover {
+    transform: translateY(-1px) scale(1.01);
+    box-shadow: 
+      0 8px 28px rgba(214, 155, 73, 0.18),
+      0 4px 14px rgba(0, 0, 0, 0.12),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+  
+  .profile-name {
+    font-size: var(--font-size-fluid-xl);
+  }
+  
+  .profile-description {
+    font-size: var(--font-size-fluid-xs);
+    max-width: 220px;
+    margin-top: var(--spacing-fluid-xs);
+  }
+  
+  .contact-list {
+    padding: 0 var(--spacing-fluid-sm) var(--contact-list-bottom-mobile);
+    gap: var(--spacing-fluid-sm);
+  }
+  
+  .contact-pill {
+    height: var(--touch-target-comfortable);
+  }
+  
+  .icon-container {
+    width: 34px;
+    height: 34px;
+    margin-left: var(--spacing-fluid-sm);
+  }
+  
+  .contact-icon {
+    width: 15px;
+    height: 15px;
+  }
+  
+  .contact-text {
+    margin-left: var(--spacing-fluid-sm);
+  }
+  
+  .contact-label {
+    font-size: var(--font-size-fluid-xs);
+  }
+  
+  .contact-value {
+    font-size: var(--font-size-fluid-xs);
+  }
+}
+
+/* Large mobile / Small tablet (481px - 600px) */
+@media (min-width: 481px) and (max-width: 600px) {
+  .card {
+    width: var(--card-width-tablet);
+    margin: var(--spacing-fluid-md) auto;
+  }
+  
+  /* Smart ornament positioning for large mobile/small tablet */
+  .corner-ornament {
+    width: var(--ornament-size-tablet);
+    height: var(--ornament-size-tablet);
+  }
+  
+  /* Unified corner positioning for large mobile/small tablet */
+  .top-left,
+  .top-right {
+    top: var(--ornament-corner-tablet);
+  }
+  
+  .top-left,
+  .bottom-left {
+    left: var(--ornament-corner-tablet);
+  }
+  
+  .top-right,
+  .bottom-right {
+    right: var(--ornament-corner-tablet);
+  }
+  
+  .bottom-left,
+  .bottom-right {
+    bottom: var(--ornament-corner-tablet);
+  }
+  
+  .profile {
+    padding: var(--spacing-fluid-xl) var(--spacing-fluid-md) var(--spacing-fluid-lg);
+  }
+  
+  .profile-image-container {
+    width: 110px;
+    height: 110px;
+  }
+  
+  /* QR Code Button - Large mobile/small tablet */
+  .qr-code-btn {
+    min-width: var(--touch-target-min);
+    min-height: var(--touch-target-min);
+    top: -10px;
+    right: -10px;
+  }
+  
+  .qr-icon {
+    width: 15px;
+    height: 15px;
+  }
+  
+  .profile-name {
+    font-size: var(--font-size-fluid-2xl);
+  }
+  
+  .profile-title {
+    font-size: var(--font-size-fluid-md);
+  }
+  
+  .profile-description {
+    font-size: var(--font-size-fluid-sm);
+    max-width: 260px;
+  }
+  
+  .contact-list {
+    padding: 0 var(--spacing-fluid-md) var(--contact-list-bottom-tablet);
+    gap: var(--spacing-fluid-md);
+  }
+  
+  .contact-pill {
+    height: var(--touch-target-large);
+  }
+  
+  .icon-container {
+    width: 38px;
+    height: 38px;
+  }
+  
+  .contact-icon {
+    width: 17px;
+    height: 17px;
+  }
+  
+  .contact-label {
+    font-size: var(--font-size-fluid-sm);
+  }
+  
+  .contact-value {
+    font-size: var(--font-size-fluid-sm);
+  }
+}
+
+/* Tablet responsive design (601px - 768px) */
+@media (min-width: 601px) and (max-width: 768px) {
+  .card {
+    width: var(--card-width-tablet);
+    margin: var(--spacing-lg) auto;
+  }
+  
+  /* Smart ornament positioning for tablet screens */
+  .corner-ornament {
+    width: var(--ornament-size-tablet);
+    height: var(--ornament-size-tablet);
+  }
+  
+  /* Unified corner positioning for tablet screens */
+  .top-left,
+  .top-right {
+    top: var(--ornament-corner-tablet);
+  }
+  
+  .top-left,
+  .bottom-left {
+    left: var(--ornament-corner-tablet);
+  }
+  
+  .top-right,
+  .bottom-right {
+    right: var(--ornament-corner-tablet);
+  }
+  
+  .bottom-left,
+  .bottom-right {
+    bottom: var(--ornament-corner-tablet);
+  }
+  
+  .profile {
+    padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-lg);
+  }
+  
+  .profile-image-container {
+    width: 120px;
+    height: 120px;
+  }
+  
+  /* QR Code Button - Tablet */
+  .qr-code-btn {
+    min-width: var(--touch-target-min);
+    min-height: var(--touch-target-min);
+  }
+  
+  .qr-icon {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .profile-name {
+    font-size: var(--font-size-xl);
+  }
+  
+  .profile-title {
+    font-size: var(--font-size-lg);
+  }
+  
+  .profile-description {
+    font-size: var(--font-size-sm);
+    max-width: 280px;
+  }
+  
+  .contact-list {
+    padding: 0 var(--spacing-lg) var(--contact-list-bottom-tablet);
+    gap: var(--spacing-md);
+  }
+  
+  .contact-pill {
+    height: 56px;
+  }
+  
+  .icon-container {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .contact-icon {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .contact-label {
+    font-size: var(--font-size-md);
+  }
+  
+  .contact-value {
+    font-size: var(--font-size-sm);
+  }
+}
+
+/* Small desktop / Large tablet (769px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .card {
+    width: var(--card-width-desktop);
+    margin: var(--spacing-xl) auto;
+  }
+  
+  /* Smart ornament positioning for small desktop */
+  .corner-ornament {
+    width: var(--ornament-size-desktop);
+    height: var(--ornament-size-desktop);
+  }
+  
+  /* Unified corner positioning for small desktop */
+  .top-left,
+  .top-right {
+    top: var(--ornament-corner-desktop);
+  }
+  
+  .top-left,
+  .bottom-left {
+    left: var(--ornament-corner-desktop);
+  }
+  
+  .top-right,
+  .bottom-right {
+    right: var(--ornament-corner-desktop);
+  }
+  
+  .bottom-left,
+  .bottom-right {
+    bottom: var(--ornament-corner-desktop);
+  }
+  
+  .card:hover {
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
+    transition: all var(--transition-slow) ease;
+  }
+  
+  .profile {
+    padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-lg);
+  }
+  
+  .profile-image-container {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .profile-image-container:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: var(--shadow-image-hover);
+  }
+  
+  .contact-pill:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(214, 155, 73, 0.3);
+  }
+}
+
+/* Desktop (1025px - 1440px) */
+@media (min-width: 1025px) and (max-width: 1440px) {
+  .card {
+    width: var(--card-width-desktop);
+    margin: var(--spacing-2xl) auto;
+  }
+  
+  /* Smart ornament positioning for desktop */
+  .corner-ornament {
+    width: var(--ornament-size-desktop);
+    height: var(--ornament-size-desktop);
+  }
+  
+  /* Unified corner positioning for desktop */
+  .top-left,
+  .top-right {
+    top: var(--ornament-corner-desktop);
+  }
+  
+  .top-left,
+  .bottom-left {
+    left: var(--ornament-corner-desktop);
+  }
+  
+  .top-right,
+  .bottom-right {
+    right: var(--ornament-corner-desktop);
+  }
+  
+  .bottom-left,
+  .bottom-right {
+    bottom: var(--ornament-corner-desktop);
+  }
+  
+  .card:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+    transition: all var(--transition-slow) ease;
+  }
+  
+  .profile {
+    padding: var(--spacing-2xl) var(--spacing-xl) var(--spacing-xl);
+  }
+  
+  .profile-image-container {
+    width: 130px;
+    height: 130px;
+  }
+  
+  .profile-image-container:hover {
+    transform: translateY(-4px) scale(1.04);
+    box-shadow: var(--shadow-image-hover);
+  }
+  
+  .contact-pill:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(214, 155, 73, 0.35);
+  }
+}
+
+/* Large desktop (1441px - 1920px) */
+@media (min-width: 1441px) and (max-width: 1920px) {
+  .card {
+    width: var(--card-width-large);
+    margin: var(--spacing-3xl) auto;
+  }
+  
+  /* Smart ornament positioning for large desktop */
+  .corner-ornament {
+    width: var(--ornament-size-desktop);
+    height: var(--ornament-size-desktop);
+  }
+  
+  /* Unified corner positioning for large desktop */
+  .top-left,
+  .top-right {
+    top: var(--ornament-corner-desktop);
+  }
+  
+  .top-left,
+  .bottom-left {
+    left: var(--ornament-corner-desktop);
+  }
+  
+  .top-right,
+  .bottom-right {
+    right: var(--ornament-corner-desktop);
+  }
+  
+  .bottom-left,
+  .bottom-right {
+    bottom: var(--ornament-corner-desktop);
+  }
+  
+  .card:hover {
+    transform: translateY(-4px) scale(1.03);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9);
+    transition: all var(--transition-slow) ease;
+  }
+  
+  .profile {
+    padding: var(--spacing-3xl) var(--spacing-2xl) var(--spacing-2xl);
+  }
+  
+  .profile-image-container {
+    width: 140px;
+    height: 140px;
+  }
+  
+  .profile-image-container:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: var(--shadow-image-hover);
+  }
+  
+  .contact-pill:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 24px rgba(214, 155, 73, 0.4);
+  }
+}
+
+/* Ultra-wide desktop (1921px+) */
+@media (min-width: 1921px) {
+  .card {
+    width: var(--card-width-large);
+    margin: var(--spacing-3xl) auto;
+    max-width: 520px;
+  }
+  
+  /* Smart ornament positioning for ultra-wide desktop */
+  .corner-ornament {
+    width: var(--ornament-size-desktop);
+    height: var(--ornament-size-desktop);
+  }
+  
+  /* Unified corner positioning for ultra-wide desktop */
+  .top-left,
+  .top-right {
+    top: var(--ornament-corner-desktop);
+  }
+  
+  .top-left,
+  .bottom-left {
+    left: var(--ornament-corner-desktop);
+  }
+  
+  .top-right,
+  .bottom-right {
+    right: var(--ornament-corner-desktop);
+  }
+  
+  .bottom-left,
+  .bottom-right {
+    bottom: var(--ornament-corner-desktop);
+  }
+  
+  .card:hover {
+    transform: translateY(-5px) scale(1.04);
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 1);
+    transition: all var(--transition-slow) ease;
+  }
+  
+  .profile {
+    padding: var(--spacing-3xl) var(--spacing-2xl) var(--spacing-2xl);
+  }
+  
+  .profile-image-container {
+    width: 150px;
+    height: 150px;
+  }
+
+  :root {
+    --profile-image-scale: 1.95;
+    --profile-image-object-position: center 24%;
+    --profile-image-transform-origin: center top;
+  }
+  
+  .profile-image-container:hover {
+    transform: translateY(-6px) scale(1.06);
+    box-shadow: var(--shadow-image-hover);
+  }
+  
+  .contact-pill:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 28px rgba(214, 155, 73, 0.45);
+  }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .corner-ornament {
+    stroke-width: 0.5;
+  }
+  
+  .contact-icon,
+  .copy-icon,
+  .chevron,
+  .toast-icon {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+  
+  /* Retina — subtle polish without degrading photo quality */
+  .profile-image {
+    image-rendering: auto;
+    filter: var(--filter-high-dpi);
+  }
+
+  .profile-image-container:hover .profile-image {
+    filter: var(--filter-professional-hover);
+  }
+  
+  /* Sharper borders and shadows */
+  .profile-image-container {
+    border-width: 1px;
+    box-shadow: 
+      0 8px 32px rgba(214, 155, 73, 0.12),
+      0 4px 16px rgba(0, 0, 0, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* Landscape orientation adjustments */
+@media (orientation: landscape) and (max-height: 500px) {
+  .card {
+    margin: var(--spacing-sm) auto;
+  }
+  
+  .profile {
+    padding: var(--spacing-md) var(--spacing-md) var(--spacing-sm);
+  }
+  
+  .profile-image-container {
+    width: 80px;
+    height: 80px;
+    margin-bottom: var(--spacing-sm);
+    border-width: 1px;
+    box-shadow: 
+      0 4px 16px rgba(214, 155, 73, 0.1),
+      0 2px 8px rgba(0, 0, 0, 0.06),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+  
+  .profile-image-container:hover {
+    transform: translateY(-1px) scale(1.01);
+    box-shadow: 
+      0 6px 20px rgba(214, 155, 73, 0.15),
+      0 3px 10px rgba(0, 0, 0, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  }
+  
+  .profile-name {
+    font-size: 24px;
+    margin-bottom: 4px;
+  }
+  
+  .profile-title {
+    font-size: var(--font-size-md);
+  }
+  
+  .profile-description {
+    font-size: var(--font-size-xs);
+    max-width: 240px;
+    margin-top: 6px;
+  }
+  
+  .contact-list {
+    padding: 0 var(--spacing-md) var(--contact-list-bottom-mobile);
+    gap: var(--spacing-sm);
+  }
+  
+  .contact-pill {
+    height: 48px;
+  }
+  
+  /* Smart ornament positioning for landscape */
+  .corner-ornament {
+    width: var(--ornament-size-mobile);
+    height: var(--ornament-size-mobile);
+  }
+  
+  /* Unified corner positioning for landscape */
+  .top-left,
+  .top-right {
+    top: var(--ornament-corner-mobile);
+  }
+  
+  .top-left,
+  .bottom-left {
+    left: var(--ornament-corner-mobile);
+  }
+  
+  .top-right,
+  .bottom-right {
+    right: var(--ornament-corner-mobile);
+  }
+  
+  .bottom-left,
+  .bottom-right {
+    bottom: var(--ornament-corner-mobile);
+  }
+}
+
+/* Advanced responsive features */
+
+/* Container queries for modern responsive design */
+@container (min-width: 300px) {
+  .card {
+    --card-padding: var(--spacing-lg);
+  }
+}
+
+@container (min-width: 400px) {
+  .card {
+    --card-padding: var(--spacing-xl);
+  }
+}
+
+/* Smart ornament positioning based on content height */
+@container (min-height: 500px) {
+  .top-left,
+  .top-right {
+    top: var(--ornament-corner-desktop);
+  }
+  
+  .top-left,
+  .bottom-left {
+    left: var(--ornament-corner-desktop);
+  }
+  
+  .top-right,
+  .bottom-right {
+    right: var(--ornament-corner-desktop);
+  }
+  
+  .bottom-left,
+  .bottom-right {
+    bottom: var(--ornament-corner-desktop);
+  }
+}
+
+@container (max-height: 499px) {
+  .top-left,
+  .top-right {
+    top: var(--ornament-corner-mobile);
+  }
+  
+  .top-left,
+  .bottom-left {
+    left: var(--ornament-corner-mobile);
+  }
+  
+  .top-right,
+  .bottom-right {
+    right: var(--ornament-corner-mobile);
+  }
+  
+  .bottom-left,
+  .bottom-right {
+    bottom: var(--ornament-corner-mobile);
+  }
+  
+  .corner-ornament {
+    width: var(--ornament-size-mobile);
+    height: var(--ornament-size-mobile);
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .contact-pill {
+    min-height: var(--touch-target-min);
+    padding: var(--spacing-sm);
+  }
+  
+  .copy-btn {
+    min-width: var(--touch-target-min);
+    min-height: var(--touch-target-min);
+  }
+  
+  .card:hover {
+    transform: none;
+  }
+  
+  .profile-image-container:hover {
+    transform: none;
+  }
+  
+  .contact-pill:hover {
+    transform: none;
+  }
+  
+  /* Enhanced spacing for touch devices */
+  .contact-list {
+    padding-bottom: var(--contact-list-bottom-mobile);
+  }
+  
+  /* Ensure ornaments don't interfere on touch devices */
+  .top-left,
+  .top-right {
+    top: var(--ornament-corner-mobile);
+  }
+  
+  .top-left,
+  .bottom-left {
+    left: var(--ornament-corner-mobile);
+  }
+  
+  .top-right,
+  .bottom-right {
+    right: var(--ornament-corner-mobile);
+  }
+  
+  .bottom-left,
+  .bottom-right {
+    bottom: var(--ornament-corner-mobile);
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .card {
+    background-color: var(--color-card);
+    border: 1px solid var(--color-gold-muted);
+  }
+  
+  .profile-image-container {
+    box-shadow: 
+      0 8px 32px rgba(214, 155, 73, 0.2),
+      0 4px 16px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .card {
+    border: 2px solid var(--color-gold);
+  }
+  
+  .profile-image-container {
+    border: 3px solid var(--color-gold);
+  }
+  
+  .contact-pill {
+    border: 1px solid var(--color-gold-muted);
+  }
+  
+  .contact-pill:hover {
+    border-color: var(--color-gold);
+  }
+}
+
+/* Print optimizations */
+@media print {
+  .card {
+    width: 100%;
+    max-width: none;
+    box-shadow: none;
+    border: 2px solid var(--color-gold);
+    margin: 0;
+    page-break-inside: avoid;
+  }
+  
+  .profile {
+    padding: var(--spacing-md);
+  }
+  
+  .contact-list {
+    padding: var(--spacing-md);
+  }
+  
+  .contact-pill {
+    border: 1px solid var(--color-gold);
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  .contact-pill:hover {
+    transform: none;
+    box-shadow: none;
+  }
+  
+  .toast {
+    display: none;
+  }
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .contact-pill:hover,
+  .contact-pill:focus-visible {
+    transform: none;
+  }
+  
+  .contact-pill .chevron {
+    transition: none;
+  }
+  
+  /* Disable image animations for reduced motion */
+  .profile-image-container:hover {
+    transform: none;
+  }
+
+  .profile-image-container:hover .profile-image {
+    transform: scale(var(--profile-image-scale));
+    filter: var(--filter-professional);
+  }
+  
+  .profile-image {
+    transition: none;
+  }
+  
+  .profile-image.loading,
+  .profile-image.loaded {
+    transition: none;
+  }
+  
+  .card:hover {
+    transform: none;
+  }
+  
+  /* Disable all hover animations */
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* Focus management for keyboard navigation */
+@media (prefers-reduced-motion: no-preference) {
+  .contact-pill:focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 2px;
+    transform: translateY(-1px);
+  }
+  
+  .copy-btn:focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 1px;
+  }
+}

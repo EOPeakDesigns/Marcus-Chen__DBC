@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1C1F2A">
+  <title>Offline — Digital Card</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      font-family: system-ui, sans-serif;
+      background: #1C1F2A;
+      color: #fff;
+      text-align: center;
+    }
+    h1 { font-size: 1.25rem; color: #F37A35; }
+    p { color: #a8b0c4; line-height: 1.5; }
+    button {
+      margin-top: 16px;
+      min-height: 44px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #F37A35, #A6605F);
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <h1>You are offline</h1>
+    <p>Reconnect to load the full digital business card.</p>
+    <button type="button" onclick="location.reload()">Try again</button>
+  </div>
+</body>
+</html>

@@ -1,0 +1,306 @@
+/* ========================================
+   QR Code Modal Component Styles
+   ======================================== */
+
+/* QR Modal Base Styling */
+.qr-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--transition-slow) ease;
+}
+
+/* QR Modal Show State */
+.qr-modal.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* QR Modal Backdrop */
+.qr-modal-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
+  z-index: var(--z-modal-backdrop);
+}
+
+/* QR Modal Content */
+.qr-modal-content {
+  position: relative;
+  background: var(--color-card);
+  border-radius: var(--radius-lg);
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.6),
+    0 10px 20px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--color-gold-muted);
+  max-width: 400px;
+  width: 90%;
+  max-height: 90vh;
+  overflow: hidden;
+  z-index: var(--z-modal);
+  transform: scale(0.9) translateY(20px);
+  transition: all var(--transition-slow) ease;
+}
+
+/* QR Modal Show Animation */
+.qr-modal.show .qr-modal-content {
+  transform: scale(1) translateY(0);
+}
+
+/* QR Modal Header */
+.qr-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-lg);
+  border-bottom: 1px solid var(--color-border);
+  background: linear-gradient(135deg, rgba(243, 122, 53, 0.1), transparent);
+}
+
+/* QR Modal Title */
+.qr-modal-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-accent);
+  margin: 0;
+}
+
+/* QR Modal Close Button */
+.qr-modal-close {
+  background: transparent;
+  border: none;
+  min-width: var(--touch-target-min);
+  min-height: var(--touch-target-min);
+  width: var(--touch-target-min);
+  height: var(--touch-target-min);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-normal) ease;
+}
+
+/* QR Modal Close Button Hover */
+.qr-modal-close:hover {
+  background: var(--color-gold-muted);
+  transform: scale(1.1);
+}
+
+/* QR Modal Close Button Focus */
+.qr-modal-close:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+}
+
+/* Close Icon Styling */
+.close-icon {
+  width: 18px;
+  height: 18px;
+  fill: var(--color-accent);
+  transition: all var(--transition-normal) ease;
+}
+
+/* QR Modal Body */
+.qr-modal-body {
+  padding: var(--spacing-xl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
+
+/* QR Image Container */
+.qr-image-container {
+  width: 100%;
+  max-width: 300px;
+  aspect-ratio: 1;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 
+    0 8px 24px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* QR Image Styling */
+.qr-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: all var(--transition-normal) ease;
+}
+
+/* QR Image Hover Effect */
+.qr-image-container:hover .qr-image {
+  transform: scale(1.02);
+}
+
+/* QR Download Button */
+.qr-download-btn {
+  background: var(--color-gold);
+  color: var(--color-card);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  transition: all var(--transition-normal) ease;
+  box-shadow: 
+    0 4px 12px rgba(214, 155, 73, 0.3),
+    0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* QR Download Button Hover */
+.qr-download-btn:hover {
+  background: var(--color-gold-muted);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 16px rgba(214, 155, 73, 0.4),
+    0 3px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* QR Download Button Focus */
+.qr-download-btn:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+}
+
+/* QR Download Button Active */
+.qr-download-btn:active {
+  transform: translateY(-1px);
+}
+
+/* Download Icon Styling */
+.download-icon {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+  transition: all var(--transition-normal) ease;
+}
+
+/* Download Icon Hover Effect */
+.qr-download-btn:hover .download-icon {
+  transform: translateY(-1px);
+}
+
+/* Download Button States */
+.qr-download-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.qr-download-btn:disabled:hover {
+  transform: none;
+  box-shadow: 
+    0 4px 12px rgba(214, 155, 73, 0.3),
+    0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Download Icon States */
+.download-icon.loading {
+  animation: spin 1s linear infinite;
+}
+
+.download-icon.success {
+  fill: white;
+}
+
+.download-icon.error {
+  fill: white;
+}
+
+/* Loading Animation */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Download Button Success State */
+.qr-download-btn.success {
+  background: #4CAF50 !important;
+  color: white !important;
+  animation: successPulse 0.6s ease-in-out;
+}
+
+/* Download Button Error State */
+.qr-download-btn.error {
+  background: #f44336 !important;
+  color: white !important;
+  animation: errorShake 0.6s ease-in-out;
+}
+
+/* Success Animation */
+@keyframes successPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* Error Animation */
+@keyframes errorShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .qr-modal {
+    transition: opacity var(--transition-fast) linear;
+  }
+  
+  .qr-modal-content {
+    transition: none;
+    transform: none;
+  }
+  
+  .qr-modal.show .qr-modal-content {
+    transform: none;
+  }
+  
+  .qr-image {
+    transition: none;
+  }
+  
+  .qr-image-container:hover .qr-image {
+    transform: none;
+  }
+  
+  .qr-download-btn {
+    transition: none;
+  }
+  
+  .qr-download-btn:hover {
+    transform: none;
+  }
+  
+  .qr-download-btn:hover .download-icon {
+    transform: none;
+  }
+}

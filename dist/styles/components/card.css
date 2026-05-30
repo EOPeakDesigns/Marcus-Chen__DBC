@@ -1,0 +1,73 @@
+/* Profile image — shared by hero portrait */
+
+.profile-image-container {
+  border-radius: var(--radius-full);
+  background: var(--profile-bg-gradient);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+.profile-image-frame {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  position: relative;
+  background: var(--profile-bg-primary);
+  isolation: isolate;
+}
+
+.profile-image-frame::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px rgba(243, 122, 53, 0.12);
+  z-index: 2;
+}
+
+.profile-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--profile-image-object-position);
+  border-radius: var(--radius-full);
+  transform: scale(var(--profile-image-scale));
+  transform-origin: var(--profile-image-transform-origin);
+  transition: transform var(--transition-slow) ease, filter var(--transition-normal) ease;
+  filter: var(--filter-professional);
+  image-rendering: auto;
+  display: block;
+}
+
+.profile-image.loading {
+  opacity: 0.4;
+  filter: var(--filter-professional) blur(1px);
+}
+
+.profile-image.loaded {
+  opacity: 1;
+  filter: var(--filter-professional);
+}
+
+.profile-image.error,
+.profile-image.timeout {
+  opacity: 0.35;
+  filter: var(--filter-error);
+  transform: scale(1);
+}
+
+.profile-image-container:hover .profile-image {
+  transform: scale(calc(var(--profile-image-scale) * 1.02));
+  filter: var(--filter-professional-hover);
+}
+
+.profile-image-container:focus-within {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}

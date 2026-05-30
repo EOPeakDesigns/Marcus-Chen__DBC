@@ -1,0 +1,122 @@
+{
+  "owner": {
+    "fullName": "Marcus Chen",
+    "title": "CEO",
+    "company": "TechFlow Innovations",
+    "titleLine": "CEO • TechFlow Innovations",
+    "bio": "Building the future of digital transformation through intelligent technology solutions.",
+    "profileImage": "assets/Owner.png",
+    "initials": "MC",
+    "verified": true
+  },
+  "slogan": {
+    "primary": "Lead the Shift.",
+    "secondary": "Transform with conviction."
+  },
+  "company": {
+    "name": "TechFlow Innovations",
+    "industry": "Technology Consulting & Innovation",
+    "specializations": [
+      "Digital Transformation",
+      "AI Integration",
+      "Enterprise Solutions"
+    ]
+  },
+  "statsSection": {
+    "title": "Executive Impact"
+  },
+  "stats": [
+    { "value": "15+", "label": "Years Leading\nTransformation" },
+    { "value": "500+", "label": "Engagements\nDelivered" },
+    { "value": "Global", "label": "Enterprise\nFootprint" },
+    { "value": "AI-Led", "label": "Growth\nPlaybooks" }
+  ],
+  "contact": {
+    "phone": {
+      "display": "+1-415-789-1234",
+      "e164": "+14157891234"
+    },
+    "email": "marcus.chen@techflow.com",
+    "address": {
+      "display": "1250 Market Street, San Francisco",
+      "short": "San Francisco HQ",
+      "full": "1250 Market Street, San Francisco, CA",
+      "mapsQuery": "1250+Market+Street+San+Francisco"
+    },
+    "whatsapp": {
+      "url": "https://wa.me/14157891234",
+      "message": "Hello Marcus, I found your digital business card."
+    },
+    "website": {
+      "url": "https://www.techflowinnovations.com",
+      "display": "techflowinnovations.com",
+      "label": "TechFlow Innovations"
+    },
+    "facebook": {
+      "handle": "@marcus.chen.tech",
+      "url": "https://facebook.com/marcus.chen.tech"
+    },
+    "linkedin": {
+      "handle": "marcus-chen-techflow",
+      "url": "https://www.linkedin.com/in/marcus-chen-techflow"
+    },
+    "instagram": {
+      "handle": "@marcus.chen.tech",
+      "url": "https://instagram.com/marcus.chen.tech"
+    },
+    "x": {
+      "handle": "@marcus_chen_tf",
+      "url": "https://x.com/marcus_chen_tf"
+    },
+    "schedule": {
+      "provider": "google_calendar_appointment",
+      "buttonLabel": "Schedule",
+      "bookingPageTitle": "Book a discovery call with Marcus Chen",
+      "ariaLabel": "Book a discovery call with Marcus Chen. See available times, get a Google Meet link, and receive confirmation emails automatically.",
+      "title": "Google Calendar booking · Google Meet · automatic reminders",
+      "toastMessage": "Opening booking page — pick an available time slot",
+      "appointmentUrl": "https://calendar.app.google/UDMdhhZVHxyAjHRs6",
+      "durationMinutes": 30,
+      "eventTitle": "Digital Transformation Discovery Call",
+      "conferencing": "google_meet",
+      "eventDescription": "30-minute online discovery session to understand your business goals and workflow. Google Meet link and reminder emails are sent automatically."
+    }
+  },
+  "showcaseVideo": {
+    "enabled": true,
+    "source": {
+      "type": "embed",
+      "embedUrl": "https://www.youtube.com/embed/2Ri8f-wqonE?playsinline=1&rel=0&modestbranding=1"
+    },
+    "i18n": {
+      "defaultLocale": "en",
+      "labels": {
+        "en": {
+          "triggerAria": "Play leadership message from Marcus Chen",
+          "triggerTitle": "Leadership perspective",
+          "eyebrow": "From the CEO's Desk",
+          "title": "Vision in Motion",
+          "caption": "Marcus Chen on partnering with enterprises for AI-led transformation and measurable growth.",
+          "closeAria": "Close leadership message"
+        }
+      }
+    }
+  },
+  "assets": {
+    "qrImage": "assets/MYQR.png"
+  },
+  "pwa": {
+    "installTitle": "Install this card",
+    "installText": "Add Marcus Chen to your home screen for one-tap access.",
+    "installApp": "Install",
+    "installDismiss": "Not now",
+    "installGuideIOS": "Tap Share, then Add to Home Screen.",
+    "installGuideAndroid": "Tap the menu (⋮), then Install app."
+  },
+  "meta": {
+    "title": "Marcus Chen — CEO, TechFlow Innovations",
+    "description": "Executive digital identity for Marcus Chen, CEO of TechFlow Innovations. Technology leadership, digital transformation, and enterprise innovation.",
+    "themeColor": "#1C1F2A",
+    "siteUrl": ""
+  }
+}

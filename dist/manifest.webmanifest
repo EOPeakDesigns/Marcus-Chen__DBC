@@ -1,0 +1,32 @@
+{
+  "name": "Marcus Chen — Digital Business Card",
+  "short_name": "Marcus Chen",
+  "description": "Digital business card for Marcus Chen, CEO of TechFlow Innovations",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#22B5D9",
+  "background_color": "#1C1F2A",
+  "icons": [
+    {
+      "src": "/assets/icons/favicon/png/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/icons/favicon/png/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/icons/favicon/png/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+/* ========================================
+   Decorative Elements Styles
+   ======================================== */
+
+/* Corner ornament base styling */
+.corner-ornament {
+  position: absolute;
+  width: var(--ornament-size-desktop);
+  height: var(--ornament-size-desktop);
+  stroke: var(--color-gold);
+  stroke-width: 1;
+  fill: none;
+  z-index: var(--z-ornament);
+  transition: all var(--transition-normal) ease;
+}
+
+/* Corner ornament positions - perfect corner symmetry */
+.top-left {
+  top: var(--ornament-corner-desktop);
+  left: var(--ornament-corner-desktop);
+}
+
+.top-right {
+  top: var(--ornament-corner-desktop);
+  right: var(--ornament-corner-desktop);
+  transform: scaleX(-1);
+}
+
+.bottom-left {
+  bottom: var(--ornament-corner-desktop);
+  left: var(--ornament-corner-desktop);
+  transform: scaleY(-1);
+}
+
+.bottom-right {
+  bottom: var(--ornament-corner-desktop);
+  right: var(--ornament-corner-desktop);
+  transform: scale(-1);
+}

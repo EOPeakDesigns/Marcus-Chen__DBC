@@ -1,0 +1,22 @@
+/* QR quick-action (replaces portrait overlay + Add to Wallet slot) */
+
+.smart-btn--qr .smart-btn__icon-qr {
+  fill: var(--color-accent-soft);
+}
+
+.smart-btn--qr:hover,
+.smart-btn--qr:focus-visible {
+  border-color: rgba(231, 159, 106, 0.45);
+  box-shadow: 0 0 20px rgba(243, 122, 53, 0.2);
+}
+
+.smart-btn--qr.modal-close-focus,
+.smart-btn--qr.modal-close-focus:focus-visible {
+  outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .smart-btn--qr:hover {
+    transform: none;
+  }
+}
