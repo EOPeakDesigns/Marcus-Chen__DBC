@@ -1,0 +1,39 @@
+{
+  "owner": {
+    "fullName": "Marcus Chen",
+    "title": "CEO",
+    "company": "TechFlow Innovations",
+    "titleLine": "CEO | TechFlow Innovations",
+    "bio": "Visionary leader transforming businesses through innovative technology solutions and strategic digital growth.",
+    "profileImage": "assets/Owner.png",
+    "initials": "MC"
+  },
+  "contact": {
+    "phone": {
+      "display": "+1-415-789-1234",
+      "e164": "+14157891234"
+    },
+    "email": "marcus.chen@techflow.com",
+    "address": {
+      "display": "1250 Market Street...",
+      "full": "1250 Market Street, San Francisco, CA",
+      "mapsQuery": "1250+Market+Street+San+Francisco"
+    },
+    "facebook": {
+      "handle": "@marcus.chen.tech",
+      "url": "https://facebook.com/marcus.chen.tech"
+    },
+    "linkedin": {
+      "handle": "marcus-chen-techflow",
+      "url": "https://www.linkedin.com/in/marcus-chen-techflow"
+    }
+  },
+  "assets": {
+    "qrImage": "assets/MYQR.png"
+  },
+  "meta": {
+    "title": "Digital Business Card - Marcus Chen",
+    "description": "Digital business card for Marcus Chen, CEO of TechFlow Innovations",
+    "themeColor": "#111213"
+  }
+}

@@ -1,0 +1,86 @@
+/* ========================================
+   Main Stylesheet — Executive Digital Card
+   ======================================== */
+
+@import url('./base/reset.css');
+@import url('./base/variables.css');
+@import url('./base/typography.css');
+@import url('./components/card.css');
+@import url('./components/executive.css');
+@import url('./components/qr-code-button.css');
+@import url('./components/qr-code-modal.css');
+@import url('./components/video-showcase.css');
+@import url('./components/toast-notification.css');
+@import url('./components/install-banner.css');
+@import url('./components/mobile-card.css');
+
+.app {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: var(--spacing-md);
+  padding-top: max(var(--spacing-md), env(safe-area-inset-top));
+  padding-right: max(var(--spacing-md), env(safe-area-inset-right));
+  padding-bottom: max(var(--spacing-md), env(safe-area-inset-bottom));
+  padding-left: max(var(--spacing-md), env(safe-area-inset-left));
+  background: var(--color-bg-primary);
+  background-image:
+    radial-gradient(ellipse 100% 70% at 50% -25%, rgba(243, 122, 53, 0.08), transparent),
+    radial-gradient(ellipse 55% 35% at 100% 40%, rgba(34, 181, 217, 0.06), transparent),
+    radial-gradient(ellipse 40% 30% at 0% 80%, rgba(100, 80, 99, 0.15), transparent);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  top: -48px;
+  left: max(6px, env(safe-area-inset-left));
+  background: var(--color-accent);
+  color: var(--color-bg-primary);
+  padding: 8px 12px;
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  z-index: var(--z-toast);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.skip-link:focus {
+  top: max(6px, env(safe-area-inset-top));
+  outline: 2px solid var(--color-accent-soft);
+  outline-offset: 2px;
+}
+
+.focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+@media print {
+  .app {
+    background: #fff;
+  }
+
+  .executive-card {
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+
+  .toast,
+  .smart-btn--qr {
+    display: none;
+  }
+}

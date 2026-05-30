@@ -1,0 +1,172 @@
+/* ========================================
+   Contact Pill Component Styles
+   ======================================== */
+
+/* Action pills (save/share) — same visual language as link pills */
+button.contact-pill {
+  width: 100%;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+button.contact-pill:focus-visible {
+  outline: none;
+}
+
+/* Contact pill base styling */
+.contact-pill {
+  background: var(--color-pill);
+  border-radius: 28px;
+  display: flex;
+  align-items: center;
+  height: 56px;
+  position: relative;
+  box-shadow: var(--shadow-pill);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all var(--transition-normal);
+  cursor: pointer;
+  overflow: hidden;
+  text-decoration: none;
+}
+
+/* Contact pill hover/focus states */
+.contact-pill:hover, 
+.contact-pill:focus-visible {
+  transform: translateY(-2px);
+  border-color: var(--color-gold-muted);
+  box-shadow: var(--shadow-pill-hover);
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .contact-pill:hover, 
+  .contact-pill:focus-visible {
+    transform: none;
+  }
+  
+  .contact-pill .chevron {
+    transition: none;
+  }
+}
+
+/* Focus visible styling */
+.contact-pill:focus-visible {
+  outline: none;
+}
+
+/* Icon container styling */
+.icon-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-gold);
+  margin-left: var(--spacing-md);
+  flex-shrink: 0;
+}
+
+/* Contact icon styling */
+.contact-icon {
+  width: 18px;
+  height: 18px;
+  fill: var(--color-gold);
+}
+
+/* Contact text container */
+.contact-text {
+  margin-left: var(--spacing-md);
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+/* Copy button styling */
+.copy-btn {
+  background: transparent;
+  border: none;
+  min-width: var(--touch-target-min);
+  min-height: var(--touch-target-min);
+  width: var(--touch-target-min);
+  height: var(--touch-target-min);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  margin-right: var(--spacing-xs);
+  z-index: var(--z-copy-btn);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* Copy button focus styling */
+.copy-btn:focus-visible {
+  outline: 1px solid var(--color-gold);
+  border-radius: var(--radius-sm);
+}
+
+/* Copy icon styling */
+.copy-icon {
+  width: 16px;
+  height: 16px;
+  fill: var(--color-gold);
+  transition: all var(--transition-normal) ease;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Success icon styling */
+.success-icon {
+  width: 16px;
+  height: 16px;
+  fill: var(--color-gold);
+  transition: all var(--transition-normal) ease;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+}
+
+/* Copy button success state */
+.copy-btn.success .copy-icon {
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+}
+
+.copy-btn.success .success-icon {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+}
+
+/* Copy button hover effects */
+.copy-btn:hover .copy-icon {
+  fill: var(--color-gold-muted);
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+.copy-btn:hover .success-icon {
+  fill: var(--color-gold-muted);
+}
+
+/* Chevron styling */
+.chevron {
+  width: 16px;
+  height: 16px;
+  fill: var(--color-gold);
+  margin-right: var(--spacing-md);
+  transition: transform var(--transition-normal);
+  flex-shrink: 0;
+}
+
+/* Chevron hover animation */
+.contact-pill:hover .chevron,
+.contact-pill:focus-visible .chevron {
+  transform: rotate(8deg);
+}

@@ -1,0 +1,11 @@
+{
+  "name": "design5-digital-card",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "icons": "node scripts/generate-pwa-icons.mjs"
+  },
+  "devDependencies": {
+    "sharp": "^0.33.5"
+  }
+}

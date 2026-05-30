@@ -1,0 +1,173 @@
+/* PWA install banner — executive palette */
+
+.install-banner {
+  position: fixed;
+  z-index: var(--z-install-banner);
+  right: max(12px, env(safe-area-inset-right));
+  bottom: max(12px, env(safe-area-inset-bottom));
+  left: auto;
+  width: min(360px, calc(100vw - 24px - env(safe-area-inset-left) - env(safe-area-inset-right)));
+  max-width: 100%;
+}
+
+.install-banner[hidden] {
+  display: none !important;
+}
+
+.install-banner__inner {
+  position: relative;
+  padding: 14px 14px 12px;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-card), var(--shadow-glow-tech);
+  animation: installBannerSlideIn 0.45s var(--ease-out-expo) backwards;
+}
+
+.install-banner__close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: var(--touch-target-min);
+  height: var(--touch-target-min);
+  min-width: var(--touch-target-min);
+  min-height: var(--touch-target-min);
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.install-banner__close:hover,
+.install-banner__close:focus-visible {
+  color: var(--color-accent);
+  outline: none;
+  background: rgba(243, 122, 53, 0.1);
+}
+
+.install-banner__title {
+  margin: 0 36px 6px 0;
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  line-height: 1.25;
+}
+
+.install-banner__text {
+  margin: 0 0 10px;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+}
+
+.install-banner__guide {
+  margin: 0 0 10px;
+  padding: 8px 10px;
+  font-size: var(--font-size-xs);
+  line-height: 1.4;
+  color: var(--color-tech);
+  background: rgba(34, 181, 217, 0.1);
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(34, 181, 217, 0.25);
+}
+
+.install-banner__guide[hidden] {
+  display: none;
+}
+
+.install-banner__actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.install-banner__btn {
+  flex: 1;
+  min-width: 0;
+  min-height: var(--touch-target-min);
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  font-family: inherit;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.install-banner__btn--primary {
+  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-earth));
+  color: var(--color-text-primary);
+  box-shadow: 0 4px 14px var(--color-glow);
+}
+
+.install-banner__btn--primary:hover,
+.install-banner__btn--primary:focus-visible {
+  transform: scale(1.02);
+  box-shadow: var(--shadow-glow);
+  outline: none;
+}
+
+.install-banner__btn--secondary {
+  background: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  border-color: var(--color-border);
+}
+
+.install-banner__btn--secondary:hover,
+.install-banner__btn--secondary:focus-visible {
+  border-color: rgba(243, 122, 53, 0.35);
+  outline: none;
+}
+
+@keyframes installBannerSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 768px) {
+  .install-banner {
+    right: max(10px, env(safe-area-inset-right));
+    bottom: max(10px, env(safe-area-inset-bottom));
+    left: max(10px, env(safe-area-inset-left));
+    width: auto;
+  }
+
+  .install-banner__actions {
+    flex-direction: column;
+  }
+
+  .install-banner__btn {
+    flex: none;
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .install-banner__inner {
+    animation: none;
+  }
+
+  .install-banner__btn:hover {
+    transform: none;
+  }
+}
+
+@media print {
+  .install-banner {
+    display: none !important;
+  }
+}
