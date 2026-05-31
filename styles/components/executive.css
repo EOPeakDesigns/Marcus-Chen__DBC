@@ -383,12 +383,14 @@
   fill: #25d366;
 }
 
-.action-row__tool--whatsapp:hover,
-.action-row__tool--whatsapp:focus-visible {
-  background: rgba(37, 211, 102, 0.2);
-  border-color: rgba(37, 211, 102, 0.55);
-  outline: none;
-  transform: scale(1.05);
+@media (hover: hover) and (pointer: fine) {
+  .action-row__tool--whatsapp:hover,
+  .action-row__tool--whatsapp:focus-visible {
+    background: rgba(37, 211, 102, 0.2);
+    border-color: rgba(37, 211, 102, 0.55);
+    outline: none;
+    transform: scale(1.05);
+  }
 }
 
 .action-row__tool--copy svg.copy-icon {

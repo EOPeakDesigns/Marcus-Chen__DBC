@@ -31,6 +31,16 @@
     outline: none !important;
   }
 
+  .action-row__tool--whatsapp:hover,
+  .action-row__tool--whatsapp:focus,
+  .action-row__tool--whatsapp:focus-visible,
+  .action-row__tool--whatsapp:active {
+    transform: none !important;
+    background: rgba(37, 211, 102, 0.1) !important;
+    border-color: rgba(37, 211, 102, 0.35) !important;
+    outline: none !important;
+  }
+
   .smart-btn:hover,
   .smart-btn--qr:hover,
   .smart-btn--schedule:hover,
@@ -201,6 +211,22 @@
 .action-row--compound.action-reset:focus-within:has(:focus-visible) {
   border-color: var(--color-border) !important;
   box-shadow: none !important;
+}
+
+.action-row__tool--whatsapp.action-reset,
+.action-row__tool--whatsapp.action-reset:hover,
+.action-row__tool--whatsapp.action-reset:focus,
+.action-row__tool--whatsapp.action-reset:focus-visible,
+.action-row__tool--whatsapp.action-reset:active {
+  transform: none !important;
+  background: rgba(37, 211, 102, 0.1) !important;
+  border-color: rgba(37, 211, 102, 0.35) !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.action-row__tool--whatsapp.action-reset svg {
+  fill: #25d366 !important;
 }
 
 .action-row--link.action-reset .action-row__chevron,

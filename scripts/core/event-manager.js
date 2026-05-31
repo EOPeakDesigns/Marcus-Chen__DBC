@@ -19,6 +19,8 @@ class EventManager {
     this.setupCopyButtons();
     this.setupContactPills();
     this.setupSocialFastTap();
+    this.setupCompoundFastTap();
+    this.setupWhatsAppFastTap();
     this.setupActionButtons();
     this.setupKeyboardNavigation();
   }
@@ -122,6 +124,53 @@ class EventManager {
   }
 
   /**
+   * Instant call/email launch on touch with immediate press reset
+   */
+  setupCompoundFastTap() {
+    document.addEventListener(
+      'pointerup',
+      (e) => {
+        if (e.pointerType === 'mouse') return;
+
+        const main = e.target.closest(
+          '.action-row__main[data-contact="phone"], .action-row__main[data-contact="email"]'
+        );
+        if (!main) return;
+
+        e.preventDefault();
+        LinkRouter.markCompoundTouchHandled(main);
+        window.FocusReset?.resetCompoundMain?.(main);
+        LinkRouter.openCompoundMainFromElement(main);
+      },
+      { capture: true, passive: false }
+    );
+  }
+
+  /**
+   * Instant WhatsApp launch on touch — app first, web only if app missing
+   */
+  setupWhatsAppFastTap() {
+    document.addEventListener(
+      'pointerup',
+      (e) => {
+        if (e.pointerType === 'mouse') return;
+
+        const btn = e.target.closest('.action-row__tool--whatsapp[data-contact="whatsapp"]');
+        if (!btn || !LinkRouter.shouldUseDeepLinks()) return;
+
+        const webHref = btn.getAttribute('data-web-href') || btn.href;
+        if (!webHref) return;
+
+        e.preventDefault();
+        LinkRouter.markWhatsAppTouchHandled(btn);
+        window.FocusReset?.resetToolVisual?.(btn);
+        LinkRouter.openWhatsAppFromElement(btn);
+      },
+      { capture: true, passive: false }
+    );
+  }
+
+  /**
    * Instant social launch on touch — avoids waiting for synthetic click
    */
   setupSocialFastTap() {
@@ -166,6 +215,24 @@ class EventManager {
           return;
         }
 
+        if (
+          pill.matches('.action-row__main[data-contact="phone"], .action-row__main[data-contact="email"]') &&
+          LinkRouter.consumeCompoundTouchHandled(pill)
+        ) {
+          e.preventDefault();
+          e.stopPropagation();
+          return;
+        }
+
+        if (
+          pill.matches('.action-row__tool--whatsapp[data-contact="whatsapp"]') &&
+          LinkRouter.consumeWhatsAppTouchHandled(pill)
+        ) {
+          e.preventDefault();
+          e.stopPropagation();
+          return;
+        }
+
         const handled = LinkRouter.handleLinkClick(pill, e);
         if (handled) {
           e.preventDefault();
@@ -176,6 +243,8 @@ class EventManager {
             pill.matches('.action-row__main[data-contact="phone"], .action-row__main[data-contact="email"]')
           ) {
             window.FocusReset?.resetCompoundMain?.(pill);
+          } else if (pill.matches('.action-row__tool--whatsapp')) {
+            window.FocusReset?.resetToolVisual?.(pill);
           } else {
             window.FocusReset?.resetControlVisual?.(pill);
           }

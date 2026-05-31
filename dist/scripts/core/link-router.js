@@ -6,9 +6,13 @@ class LinkRouter {
   static APP_FALLBACK_MS = 1800;
   static SOCIAL_FALLBACK_MS = 1500;
   static FACEBOOK_FALLBACK_MS = 2000;
+  static FACEBOOK_STAGE_MS = 1100;
+  static WHATSAPP_FALLBACK_MS = 1500;
   static _suppressErrorsUntil = 0;
   static _activeNavigation = null;
   static _socialTouchHandled = null;
+  static _compoundTouchHandled = null;
+  static _whatsappTouchHandled = null;
 
   static isMobile() {
     return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
@@ -94,6 +98,30 @@ class LinkRouter {
     return `whatsapp://send?phone=${match[1]}`;
   }
 
+  static extractWhatsAppPhone(waUrl) {
+    if (!waUrl) return null;
+    const match = String(waUrl).match(/wa\.me\/(\d+)/i);
+    return match ? match[1] : null;
+  }
+
+  static buildAndroidWhatsAppIntent(waUrl) {
+    const phone = LinkRouter.extractWhatsAppPhone(waUrl);
+    if (!phone) return waUrl;
+    return (
+      `intent://send?phone=${phone}#Intent;` +
+      'scheme=whatsapp;' +
+      'package=com.whatsapp;' +
+      'end'
+    );
+  }
+
+  static resolveWhatsAppLaunchUrl(waUrl) {
+    if (LinkRouter.isAndroid()) {
+      return LinkRouter.buildAndroidWhatsAppIntent(waUrl);
+    }
+    return LinkRouter.buildWhatsAppAppUrl(waUrl) || waUrl;
+  }
+
   static buildMapsUrls(mapsQuery, webUrl) {
     const label = decodeURIComponent(String(mapsQuery || '').replace(/\+/g, ' '));
     const encoded = encodeURIComponent(label);
@@ -173,11 +201,12 @@ class LinkRouter {
   }
 
   /**
-   * Android Facebook intent — no browser_fallback_url (avoids instant browser open)
+   * Android Facebook intent — no browser_fallback_url (staged fallback handles web)
    * @param {string} webUrl
+   * @param {string} packageName
    * @returns {string}
    */
-  static buildAndroidFacebookIntent(webUrl) {
+  static buildAndroidFacebookIntent(webUrl, packageName = 'com.facebook.katana') {
     const normalized = LinkRouter.normalizeFacebookUrl(webUrl);
     const slug = LinkRouter.extractFacebookSlug(normalized);
     const fbPath = slug
@@ -187,7 +216,7 @@ class LinkRouter {
     return (
       `intent://${fbPath}#Intent;` +
       'scheme=fb;' +
-      'package=com.facebook.katana;' +
+      `package=${packageName};` +
       'end'
     );
   }
@@ -257,7 +286,7 @@ class LinkRouter {
     if (platform === 'facebook') {
       const normalized = LinkRouter.normalizeFacebookUrl(webUrl);
       if (LinkRouter.isAndroid()) {
-        return LinkRouter.buildAndroidFacebookIntent(normalized);
+        return LinkRouter.buildAndroidFacebookIntent(normalized, 'com.facebook.katana');
       }
       return LinkRouter.buildFacebookAppUrl(normalized);
     }
@@ -292,26 +321,122 @@ class LinkRouter {
     return false;
   }
 
+  static markCompoundTouchHandled(el) {
+    LinkRouter._compoundTouchHandled = el;
+    window.setTimeout(() => {
+      if (LinkRouter._compoundTouchHandled === el) {
+        LinkRouter._compoundTouchHandled = null;
+      }
+    }, 500);
+  }
+
+  static consumeCompoundTouchHandled(el) {
+    if (LinkRouter._compoundTouchHandled === el) {
+      LinkRouter._compoundTouchHandled = null;
+      return true;
+    }
+    return false;
+  }
+
+  static markWhatsAppTouchHandled(el) {
+    LinkRouter._whatsappTouchHandled = el;
+    window.setTimeout(() => {
+      if (LinkRouter._whatsappTouchHandled === el) {
+        LinkRouter._whatsappTouchHandled = null;
+      }
+    }, 500);
+  }
+
+  static consumeWhatsAppTouchHandled(el) {
+    if (LinkRouter._whatsappTouchHandled === el) {
+      LinkRouter._whatsappTouchHandled = null;
+      return true;
+    }
+    return false;
+  }
+
+  static openFacebook(webUrl) {
+    const normalized = LinkRouter.normalizeFacebookUrl(webUrl);
+
+    if (LinkRouter.isAndroid()) {
+      LinkRouter.openWithStagedFallback(
+        [
+          LinkRouter.buildAndroidFacebookIntent(normalized, 'com.facebook.katana'),
+          LinkRouter.buildAndroidFacebookIntent(normalized, 'com.facebook.lite')
+        ],
+        normalized,
+        { stageMs: LinkRouter.FACEBOOK_STAGE_MS }
+      );
+      return;
+    }
+
+    LinkRouter.openWithAppFallback(
+      LinkRouter.buildFacebookAppUrl(normalized),
+      normalized,
+      { newTab: false, fallbackMs: LinkRouter.FACEBOOK_FALLBACK_MS }
+    );
+  }
+
+  static openWhatsAppFromElement(el) {
+    if (!el) return;
+
+    const webUrl = el.getAttribute('data-web-href') || el.href;
+    const launchUrl =
+      el.getAttribute('data-launch-href') || LinkRouter.resolveWhatsAppLaunchUrl(webUrl);
+
+    if (!webUrl) return;
+
+    LinkRouter.openWithAppFallback(launchUrl, webUrl, {
+      newTab: false,
+      fallbackMs: LinkRouter.WHATSAPP_FALLBACK_MS
+    });
+  }
+
+  static openCompoundMainFromElement(el) {
+    if (!el) return;
+
+    const key = el.getAttribute('data-contact');
+    if (key === 'email') {
+      const email =
+        el.getAttribute('data-email') ||
+        (el.getAttribute('data-web-href') || el.getAttribute('href') || '')
+          .replace(/^mailto:/i, '');
+      LinkRouter.openEmail(email);
+      return;
+    }
+
+    if (key === 'phone') {
+      const tel = el.getAttribute('href');
+      if (tel) {
+        LinkRouter.markNavigation();
+        window.location.assign(tel);
+      }
+    }
+  }
+
   static openSocialFromElement(el) {
     if (!el) return;
 
     const platform = el.getAttribute('data-contact');
     const webUrl = el.getAttribute('data-web-href') || el.href;
     const appUrl = el.getAttribute('data-app-href');
+
+    if (!webUrl) return;
+
+    if (platform === 'facebook') {
+      LinkRouter.openFacebook(webUrl);
+      return;
+    }
+
     const launchUrl =
       el.getAttribute('data-launch-href') ||
       LinkRouter.resolveSocialLaunchUrl(platform, webUrl, appUrl);
 
-    if (!launchUrl || !webUrl) return;
-
-    const fallbackMs =
-      platform === 'facebook'
-        ? LinkRouter.FACEBOOK_FALLBACK_MS
-        : LinkRouter.SOCIAL_FALLBACK_MS;
+    if (!launchUrl) return;
 
     LinkRouter.openWithAppFallback(launchUrl, webUrl, {
       newTab: false,
-      fallbackMs
+      fallbackMs: LinkRouter.SOCIAL_FALLBACK_MS
     });
   }
 
@@ -382,16 +507,94 @@ class LinkRouter {
     }
   }
 
+  /**
+   * Try multiple app targets in sequence, then web (Facebook → Lite → browser)
+   * @param {string[]} appUrls
+   * @param {string} webUrl
+   * @param {{ stageMs?: number }} options
+   */
+  static openWithStagedFallback(appUrls, webUrl, options = {}) {
+    const { stageMs = LinkRouter.FACEBOOK_STAGE_MS } = options;
+    const stages = (appUrls || []).filter(Boolean);
+
+    if (!stages.length && webUrl) {
+      LinkRouter.markNavigation();
+      window.location.assign(webUrl);
+      return;
+    }
+
+    if (LinkRouter._activeNavigation) {
+      window.clearTimeout(LinkRouter._activeNavigation.timer);
+      LinkRouter._activeNavigation.cleanup?.();
+    }
+
+    let settled = false;
+    let stageIndex = 0;
+
+    const cleanup = () => {
+      document.removeEventListener('visibilitychange', onPageLeft);
+      window.removeEventListener('pagehide', onPageLeft);
+    };
+
+    const settle = (openedApp) => {
+      if (settled) return;
+      settled = true;
+      if (LinkRouter._activeNavigation?.timer) {
+        window.clearTimeout(LinkRouter._activeNavigation.timer);
+      }
+      cleanup();
+      LinkRouter._activeNavigation = null;
+
+      if (openedApp || !webUrl) return;
+
+      LinkRouter.markNavigation();
+      window.location.assign(webUrl);
+    };
+
+    const onPageLeft = () => {
+      if (document.hidden) settle(true);
+    };
+
+    const scheduleNext = () => {
+      if (settled) return;
+
+      if (stageIndex >= stages.length) {
+        settle(false);
+        return;
+      }
+
+      LinkRouter.tryOpenAppUrl(stages[stageIndex]);
+      stageIndex += 1;
+
+      if (stageIndex >= stages.length && !webUrl) {
+        return;
+      }
+
+      LinkRouter._activeNavigation.timer = window.setTimeout(() => {
+        if (!document.hidden) {
+          scheduleNext();
+        }
+      }, stageMs);
+    };
+
+    document.addEventListener('visibilitychange', onPageLeft);
+    window.addEventListener('pagehide', () => settle(true));
+
+    LinkRouter._activeNavigation = { timer: null, cleanup };
+    scheduleNext();
+  }
+
   static openSocial(platform, appUrl, webUrl) {
+    if (platform === 'facebook') {
+      LinkRouter.openFacebook(webUrl);
+      return;
+    }
+
     const launchUrl = LinkRouter.resolveSocialLaunchUrl(platform, webUrl, appUrl);
-    const fallbackMs =
-      platform === 'facebook'
-        ? LinkRouter.FACEBOOK_FALLBACK_MS
-        : LinkRouter.SOCIAL_FALLBACK_MS;
 
     LinkRouter.openWithAppFallback(launchUrl, webUrl, {
       newTab: false,
-      fallbackMs
+      fallbackMs: LinkRouter.SOCIAL_FALLBACK_MS
     });
   }
 
@@ -472,19 +675,22 @@ class LinkRouter {
     }
 
     if (key === 'whatsapp' && LinkRouter.shouldUseDeepLinks()) {
-      const appHref = el.getAttribute('data-app-href');
       const webHref = el.getAttribute('data-web-href') || el.href;
-      if (appHref && webHref) {
+      if (webHref) {
         event?.preventDefault();
         event?.stopPropagation();
-        LinkRouter.openWithAppFallback(appHref, webHref, { newTab: false });
+        LinkRouter.openWhatsAppFromElement(el);
         return true;
       }
     }
 
     if (key === 'phone') {
+      event?.preventDefault();
+      event?.stopPropagation();
       LinkRouter.markNavigation();
-      return false;
+      const tel = el.getAttribute('href');
+      if (tel) window.location.assign(tel);
+      return true;
     }
 
     return false;
@@ -512,6 +718,7 @@ class LinkRouter {
       waEl.href = web;
       waEl.setAttribute('data-web-href', web);
       if (app) waEl.setAttribute('data-app-href', app);
+      waEl.setAttribute('data-launch-href', LinkRouter.resolveWhatsAppLaunchUrl(web));
       if (useDeepLinks) waEl.removeAttribute('target');
     }
 
