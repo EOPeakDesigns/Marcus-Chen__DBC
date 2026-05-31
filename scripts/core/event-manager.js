@@ -19,7 +19,6 @@ class EventManager {
     this.setupCopyButtons();
     this.setupContactPills();
     this.setupSocialFastTap();
-    this.setupCompoundFastTap();
     this.setupWhatsAppFastTap();
     this.setupActionButtons();
     this.setupKeyboardNavigation();
@@ -124,47 +123,51 @@ class EventManager {
   }
 
   /**
-   * Instant call/email launch on touch with immediate press reset
-   */
-  setupCompoundFastTap() {
-    document.addEventListener(
-      'pointerup',
-      (e) => {
-        if (e.pointerType === 'mouse') return;
-
-        const main = e.target.closest(
-          '.action-row__main[data-contact="phone"], .action-row__main[data-contact="email"]'
-        );
-        if (!main) return;
-
-        e.preventDefault();
-        LinkRouter.markCompoundTouchHandled(main);
-        window.FocusReset?.resetCompoundMain?.(main);
-        LinkRouter.openCompoundMainFromElement(main);
-      },
-      { capture: true, passive: false }
-    );
-  }
-
-  /**
    * Instant WhatsApp launch on touch — app first, web only if app missing
    */
   setupWhatsAppFastTap() {
+    const selector = '.action-row__tool--whatsapp[data-contact="whatsapp"]';
+
+    const blockNativeNav = (e) => {
+      const btn = e.target.closest(selector);
+      if (!btn || !LinkRouter.shouldUseDeepLinks()) return;
+      e.preventDefault();
+      e.stopPropagation();
+      return btn;
+    };
+
+    document.addEventListener('touchend', blockNativeNav, { capture: true, passive: false });
+
+    document.addEventListener(
+      'click',
+      (e) => {
+        const btn = blockNativeNav(e);
+        if (!btn) return;
+        if (LinkRouter.consumeWhatsAppTouchHandled(btn)) return;
+        if (!LinkRouter.isMobile() && !LinkRouter.isCoarsePointer()) {
+          LinkRouter.openWhatsApp(btn.getAttribute('data-web-href'));
+        }
+      },
+      { capture: true, passive: false }
+    );
+
     document.addEventListener(
       'pointerup',
       (e) => {
         if (e.pointerType === 'mouse') return;
 
-        const btn = e.target.closest('.action-row__tool--whatsapp[data-contact="whatsapp"]');
+        const btn = e.target.closest(selector);
         if (!btn || !LinkRouter.shouldUseDeepLinks()) return;
 
-        const webHref = btn.getAttribute('data-web-href') || btn.href;
+        const webHref = btn.getAttribute('data-web-href');
         if (!webHref) return;
 
         e.preventDefault();
+        e.stopPropagation();
+
         LinkRouter.markWhatsAppTouchHandled(btn);
         window.FocusReset?.resetToolVisual?.(btn);
-        LinkRouter.openWhatsAppFromElement(btn);
+        LinkRouter.openWhatsApp(webHref);
       },
       { capture: true, passive: false }
     );
@@ -201,7 +204,7 @@ class EventManager {
    */
   setupContactPills() {
     this.contactPills = document.querySelectorAll(
-      '.action-row--link[data-contact], .action-row__main[data-contact], .action-row__tool[data-contact], .social-btn[data-contact]'
+      '.action-row--link[data-contact], .action-row__tool[data-contact], .social-btn[data-contact]'
     );
 
     this.contactPills.forEach((pill) => {
@@ -209,15 +212,6 @@ class EventManager {
         if (
           pill.classList.contains('social-btn') &&
           LinkRouter.consumeSocialTouchHandled(pill)
-        ) {
-          e.preventDefault();
-          e.stopPropagation();
-          return;
-        }
-
-        if (
-          pill.matches('.action-row__main[data-contact="phone"], .action-row__main[data-contact="email"]') &&
-          LinkRouter.consumeCompoundTouchHandled(pill)
         ) {
           e.preventDefault();
           e.stopPropagation();
@@ -239,11 +233,7 @@ class EventManager {
           e.stopPropagation();
         }
         if (!pill.classList.contains('social-btn')) {
-          if (
-            pill.matches('.action-row__main[data-contact="phone"], .action-row__main[data-contact="email"]')
-          ) {
-            window.FocusReset?.resetCompoundMain?.(pill);
-          } else if (pill.matches('.action-row__tool--whatsapp')) {
+          if (pill.matches('.action-row__tool--whatsapp')) {
             window.FocusReset?.resetToolVisual?.(pill);
           } else {
             window.FocusReset?.resetControlVisual?.(pill);
@@ -292,7 +282,7 @@ class EventManager {
   async handleCopyClick(textToCopy, type, button) {
     try {
       // Check if the parent container has no-notification attribute
-      const parentContainer = button.closest('.action-row--compound, .action-row');
+      const parentContainer = button.closest('.action-row-tools, .action-row');
       const noNotification = parentContainer?.hasAttribute('data-no-notification');
       
       // Show visual feedback immediately

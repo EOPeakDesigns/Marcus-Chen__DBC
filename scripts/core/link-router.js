@@ -7,12 +7,12 @@ class LinkRouter {
   static SOCIAL_FALLBACK_MS = 1500;
   static FACEBOOK_FALLBACK_MS = 2000;
   static FACEBOOK_STAGE_MS = 1100;
-  static WHATSAPP_FALLBACK_MS = 1500;
+  static WHATSAPP_FALLBACK_MS = 2400;
   static _suppressErrorsUntil = 0;
   static _activeNavigation = null;
   static _socialTouchHandled = null;
-  static _compoundTouchHandled = null;
   static _whatsappTouchHandled = null;
+  static _whatsappLaunchLock = false;
 
   static isMobile() {
     return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
@@ -116,10 +116,12 @@ class LinkRouter {
   }
 
   static resolveWhatsAppLaunchUrl(waUrl) {
+    const appUrl = LinkRouter.buildWhatsAppAppUrl(waUrl);
+    if (appUrl) return appUrl;
     if (LinkRouter.isAndroid()) {
       return LinkRouter.buildAndroidWhatsAppIntent(waUrl);
     }
-    return LinkRouter.buildWhatsAppAppUrl(waUrl) || waUrl;
+    return waUrl;
   }
 
   static buildMapsUrls(mapsQuery, webUrl) {
@@ -321,23 +323,6 @@ class LinkRouter {
     return false;
   }
 
-  static markCompoundTouchHandled(el) {
-    LinkRouter._compoundTouchHandled = el;
-    window.setTimeout(() => {
-      if (LinkRouter._compoundTouchHandled === el) {
-        LinkRouter._compoundTouchHandled = null;
-      }
-    }, 500);
-  }
-
-  static consumeCompoundTouchHandled(el) {
-    if (LinkRouter._compoundTouchHandled === el) {
-      LinkRouter._compoundTouchHandled = null;
-      return true;
-    }
-    return false;
-  }
-
   static markWhatsAppTouchHandled(el) {
     LinkRouter._whatsappTouchHandled = el;
     window.setTimeout(() => {
@@ -379,39 +364,83 @@ class LinkRouter {
 
   static openWhatsAppFromElement(el) {
     if (!el) return;
-
-    const webUrl = el.getAttribute('data-web-href') || el.href;
-    const launchUrl =
-      el.getAttribute('data-launch-href') || LinkRouter.resolveWhatsAppLaunchUrl(webUrl);
-
+    const webUrl = el.getAttribute('data-web-href');
     if (!webUrl) return;
-
-    LinkRouter.openWithAppFallback(launchUrl, webUrl, {
-      newTab: false,
-      fallbackMs: LinkRouter.WHATSAPP_FALLBACK_MS
-    });
+    LinkRouter.openWhatsApp(webUrl);
   }
 
-  static openCompoundMainFromElement(el) {
-    if (!el) return;
+  /**
+   * WhatsApp — app only; web opens once if app did not take focus (never both at once)
+   * @param {string} webUrl
+   */
+  static openWhatsApp(webUrl) {
+    if (!webUrl || LinkRouter._whatsappLaunchLock) return;
 
-    const key = el.getAttribute('data-contact');
-    if (key === 'email') {
-      const email =
-        el.getAttribute('data-email') ||
-        (el.getAttribute('data-web-href') || el.getAttribute('href') || '')
-          .replace(/^mailto:/i, '');
-      LinkRouter.openEmail(email);
+    LinkRouter._whatsappLaunchLock = true;
+    window.setTimeout(() => {
+      LinkRouter._whatsappLaunchLock = false;
+    }, 1200);
+
+    if (!LinkRouter.shouldUseDeepLinks()) {
+      LinkRouter.markNavigation();
+      window.open(webUrl, '_blank', 'noopener,noreferrer');
       return;
     }
 
-    if (key === 'phone') {
-      const tel = el.getAttribute('href');
-      if (tel) {
-        LinkRouter.markNavigation();
-        window.location.assign(tel);
-      }
+    const appUrl = LinkRouter.resolveWhatsAppLaunchUrl(webUrl);
+
+    if (LinkRouter._activeNavigation) {
+      window.clearTimeout(LinkRouter._activeNavigation.timer);
+      LinkRouter._activeNavigation.cleanup();
+      LinkRouter._activeNavigation = null;
     }
+
+    let settled = false;
+    const startedAt = Date.now();
+
+    const cleanup = () => {
+      document.removeEventListener('visibilitychange', onPageLeft);
+      window.removeEventListener('pagehide', onPageLeft);
+      window.removeEventListener('blur', onWindowBlur);
+    };
+
+    const settle = (openedApp) => {
+      if (settled) return;
+      settled = true;
+      if (LinkRouter._activeNavigation?.timer) {
+        window.clearTimeout(LinkRouter._activeNavigation.timer);
+      }
+      cleanup();
+      LinkRouter._activeNavigation = null;
+
+      if (openedApp) return;
+
+      LinkRouter.markNavigation();
+      window.location.assign(webUrl);
+    };
+
+    const onPageLeft = () => {
+      if (document.hidden) settle(true);
+    };
+
+    const onWindowBlur = () => {
+      if (Date.now() - startedAt > 120) {
+        settle(true);
+      }
+    };
+
+    document.addEventListener('visibilitychange', onPageLeft);
+    window.addEventListener('pagehide', () => settle(true));
+    window.addEventListener('blur', onWindowBlur);
+
+    const timer = window.setTimeout(() => {
+      if (!settled) settle(false);
+    }, LinkRouter.WHATSAPP_FALLBACK_MS);
+
+    LinkRouter._activeNavigation = { timer, cleanup, startedAt };
+
+    LinkRouter.markNavigation();
+    window.location.assign(appUrl);
   }
 
   static openSocialFromElement(el) {
@@ -463,10 +492,12 @@ class LinkRouter {
     if (!webUrl) return;
 
     let settled = false;
+    const startedAt = Date.now();
 
     const cleanup = () => {
       document.removeEventListener('visibilitychange', onPageLeft);
       window.removeEventListener('pagehide', onPageLeft);
+      window.removeEventListener('blur', onWindowBlur);
     };
 
     const settle = (openedApp) => {
@@ -493,14 +524,21 @@ class LinkRouter {
       if (document.hidden) settle(true);
     };
 
+    const onWindowBlur = () => {
+      if (Date.now() - startedAt > 120) {
+        settle(true);
+      }
+    };
+
     document.addEventListener('visibilitychange', onPageLeft);
     window.addEventListener('pagehide', () => settle(true));
+    window.addEventListener('blur', onWindowBlur);
 
     const timer = window.setTimeout(() => {
-      if (!document.hidden) settle(false);
+      if (!settled) settle(false);
     }, fallbackMs);
 
-    LinkRouter._activeNavigation = { timer, cleanup };
+    LinkRouter._activeNavigation = { timer, cleanup, startedAt };
 
     if (!appUrl) {
       settle(false);
@@ -675,11 +713,11 @@ class LinkRouter {
     }
 
     if (key === 'whatsapp' && LinkRouter.shouldUseDeepLinks()) {
-      const webHref = el.getAttribute('data-web-href') || el.href;
+      const webHref = el.getAttribute('data-web-href');
       if (webHref) {
         event?.preventDefault();
         event?.stopPropagation();
-        LinkRouter.openWhatsAppFromElement(el);
+        LinkRouter.openWhatsApp(webHref);
         return true;
       }
     }
@@ -713,13 +751,18 @@ class LinkRouter {
 
     const waEl = document.querySelector('[data-contact="whatsapp"]');
     if (waEl) {
-      const web = contact.whatsapp?.url || waEl.href;
+      const web = contact.whatsapp?.url || waEl.getAttribute('data-web-href') || waEl.href;
       const app = LinkRouter.buildWhatsAppAppUrl(web);
-      waEl.href = web;
       waEl.setAttribute('data-web-href', web);
       if (app) waEl.setAttribute('data-app-href', app);
       waEl.setAttribute('data-launch-href', LinkRouter.resolveWhatsAppLaunchUrl(web));
-      if (useDeepLinks) waEl.removeAttribute('target');
+      if (useDeepLinks) {
+        waEl.removeAttribute('target');
+        waEl.setAttribute('href', '#');
+        waEl.setAttribute('role', 'link');
+      } else {
+        waEl.href = web;
+      }
     }
 
     const addrEl = document.querySelector('[data-contact="address"]');

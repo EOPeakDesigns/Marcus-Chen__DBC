@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-globals */
-const CACHE_VERSION = 'dbc-p12-contact-deeplink-v1';
+const CACHE_VERSION = 'dbc-p14-call-email-linkrows-v1';
 const CACHE_NAME = `digital-business-card-${CACHE_VERSION}`;
 const OFFLINE_URL = '/offline.html';
 

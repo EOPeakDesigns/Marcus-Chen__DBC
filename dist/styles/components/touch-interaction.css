@@ -4,47 +4,13 @@
 .showcase-play-btn,
 .social-btn,
 .action-row--link,
-.action-row__main,
-.action-row__tool,
+.action-row-tools__btn,
 .stat-card {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
 }
 
 @media (hover: none), (pointer: coarse) {
-  .action-row--compound:hover,
-  .action-row--compound:focus-within,
-  .action-row--compound:focus-within:has(:focus-visible),
-  .action-row__main:hover {
-    transform: none;
-    box-shadow: none;
-    border-color: var(--color-border);
-    background: transparent;
-  }
-
-  .action-row__main:focus,
-  .action-row__main:focus-visible,
-  .action-row__main:active {
-    background: transparent !important;
-    opacity: 1 !important;
-    transform: none !important;
-    outline: none !important;
-  }
-
-  .action-row__tool--whatsapp:hover,
-  .action-row__tool--whatsapp:focus,
-  .action-row__tool--whatsapp:focus-visible,
-  .action-row__tool--whatsapp:active {
-    transform: none !important;
-    background: rgba(37, 211, 102, 0.1) !important;
-    border-color: rgba(37, 211, 102, 0.35) !important;
-    outline: none !important;
-  }
-
-  .smart-btn:hover,
-  .smart-btn--qr:hover,
-  .smart-btn--schedule:hover,
-  .smart-btn--schedule-unconfigured:hover,
   .action-row--link:hover {
     transform: none;
     box-shadow: none;
@@ -52,35 +18,50 @@
     background: var(--color-bg-secondary);
   }
 
-  .action-row--compound:focus-within:not(:has(:focus-visible)) {
-    border-color: var(--color-border);
-    box-shadow: none;
-  }
-
-  .action-row__main:focus:not(:focus-visible) {
-    background: transparent;
-  }
-
-  .action-row--link:hover .action-row__chevron {
-    transform: none;
-    fill: var(--color-text-secondary);
-  }
-
   .action-row--link:focus:not(:focus-visible),
-  .action-row--link:focus-visible,
-  .action-row__main:focus:not(:focus-visible),
-  .action-row__main:focus-visible {
+  .action-row--link:focus-visible {
     transform: none;
-    background: transparent;
+    background: var(--color-bg-secondary);
     border-color: var(--color-border);
     box-shadow: none;
     outline: none;
   }
 
+  .action-row--link:hover .action-row__chevron,
   .action-row--link:focus:not(:focus-visible) .action-row__chevron,
   .action-row--link:focus-visible .action-row__chevron {
     transform: none;
     fill: var(--color-text-secondary);
+  }
+
+  .action-row-tools__btn--whatsapp:hover,
+  .action-row-tools__btn--whatsapp:focus,
+  .action-row-tools__btn--whatsapp:focus-visible,
+  .action-row-tools__btn--whatsapp:active,
+  .action-row-tools__btn--copy:hover,
+  .action-row-tools__btn--copy:focus,
+  .action-row-tools__btn--copy:focus-visible,
+  .action-row-tools__btn--copy:active {
+    transform: none !important;
+    outline: none !important;
+  }
+
+  .action-row-tools__btn--whatsapp:hover,
+  .action-row-tools__btn--whatsapp:focus,
+  .action-row-tools__btn--whatsapp:focus-visible,
+  .action-row-tools__btn--whatsapp:active {
+    background: rgba(37, 211, 102, 0.1) !important;
+    border-color: rgba(37, 211, 102, 0.35) !important;
+  }
+
+  .smart-btn:hover,
+  .smart-btn--qr:hover,
+  .smart-btn--schedule:hover,
+  .smart-btn--schedule-unconfigured:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: var(--color-border);
+    background: var(--color-bg-secondary);
   }
 
   .stat-card:hover,
@@ -140,8 +121,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .smart-btn:active,
-  .action-row--link:active,
-  .action-row__main:active {
+  .action-row--link:active {
     transform: scale(0.99);
     transition-duration: 0.08s;
   }
@@ -189,28 +169,16 @@
   fill: var(--color-text-secondary) !important;
 }
 
-.action-row__main.action-reset,
-.action-row__main.action-reset:hover,
-.action-row__main.action-reset:focus,
-.action-row__main.action-reset:focus-visible,
-.action-row__main.action-reset:active,
 .action-row--link.action-reset,
 .action-row--link.action-reset:hover,
 .action-row--link.action-reset:focus,
-.action-row--link.action-reset:focus-visible {
+.action-row--link.action-reset:focus-visible,
+.action-row--link.action-reset:active {
   transform: none !important;
-  background: transparent !important;
+  background: var(--color-bg-secondary) !important;
   border-color: var(--color-border) !important;
   box-shadow: none !important;
   outline: none !important;
-}
-
-.action-row--compound.action-reset,
-.action-row--compound.action-reset:hover,
-.action-row--compound.action-reset:focus-within,
-.action-row--compound.action-reset:focus-within:has(:focus-visible) {
-  border-color: var(--color-border) !important;
-  box-shadow: none !important;
 }
 
 .action-row__tool--whatsapp.action-reset,

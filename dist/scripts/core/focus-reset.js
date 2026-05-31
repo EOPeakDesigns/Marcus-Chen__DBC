@@ -7,14 +7,10 @@ const FocusReset = (() => {
     '.smart-btn',
     '.showcase-play-btn',
     '.social-btn',
-    '.action-row__main',
     '.action-row--link',
     '.action-row__tool--whatsapp',
     '.stat-card'
   ].join(', ');
-
-  const COMPOUND_MAIN_SELECTOR =
-    '.action-row__main[data-contact="phone"], .action-row__main[data-contact="email"]';
 
   const MODAL_TRIGGER_ACTIONS = new Set(['open-qr', 'open-showcase-video']);
 
@@ -26,70 +22,6 @@ const FocusReset = (() => {
     if (el instanceof HTMLElement && typeof el.blur === 'function') {
       el.blur();
     }
-  }
-
-  function defocusPage() {
-    const active = document.activeElement;
-    if (active instanceof HTMLElement && active !== document.body) {
-      active.blur();
-    }
-
-    if (!document.body.hasAttribute('tabindex')) {
-      document.body.setAttribute('tabindex', '-1');
-    }
-
-    document.body.focus({ preventScroll: true });
-    document.body.removeAttribute('tabindex');
-  }
-
-  function clearCompoundReset(el, compoundRow) {
-    el.classList.remove('action-reset');
-    compoundRow?.classList.remove('action-reset');
-  }
-
-  function releaseCompoundMainFocus(el, compoundRow) {
-    const attemptDefocus = () => {
-      blurElement(el);
-      if (document.activeElement === el) {
-        defocusPage();
-        blurElement(el);
-      }
-    };
-
-    attemptDefocus();
-    requestAnimationFrame(attemptDefocus);
-    window.setTimeout(attemptDefocus, 0);
-    window.setTimeout(attemptDefocus, 50);
-
-    const finish = () => {
-      clearCompoundReset(el, compoundRow);
-      blurElement(el);
-    };
-
-    document.addEventListener(
-      'pointerdown',
-      (event) => {
-        if (!el.contains(event.target)) {
-          finish();
-        }
-      },
-      { once: true, capture: true }
-    );
-
-    window.addEventListener('pageshow', finish, { once: true });
-  }
-
-  function resetCompoundMain(el) {
-    if (!(el instanceof HTMLElement)) return;
-
-    const compoundRow = el.closest('.action-row--compound');
-    el.classList.remove('modal-close-focus');
-    el.classList.add('action-reset');
-    if (compoundRow) {
-      compoundRow.classList.add('action-reset');
-    }
-
-    releaseCompoundMainFocus(el, compoundRow);
   }
 
   function resetToolVisual(el) {
@@ -123,12 +55,6 @@ const FocusReset = (() => {
 
     if (target.closest('.copy-btn, .action-row__tool--copy, .social-btn')) return;
 
-    const compoundMain = target.closest(COMPOUND_MAIN_SELECTOR);
-    if (compoundMain instanceof HTMLElement && isTouchUi()) {
-      resetCompoundMain(compoundMain);
-      return;
-    }
-
     const whatsappTool = target.closest('.action-row__tool--whatsapp');
     if (whatsappTool instanceof HTMLElement && isTouchUi()) {
       resetToolVisual(whatsappTool);
@@ -144,11 +70,6 @@ const FocusReset = (() => {
   function resetControlVisual(el) {
     if (!(el instanceof HTMLElement)) return;
 
-    if (isTouchUi() && el.matches('.action-row__main')) {
-      resetCompoundMain(el);
-      return;
-    }
-
     if (isTouchUi() && el.matches('.action-row__tool--whatsapp')) {
       resetToolVisual(el);
       return;
@@ -158,36 +79,26 @@ const FocusReset = (() => {
     el.classList.add('action-reset');
     blurElement(el);
 
-    const compoundRow = el.closest('.action-row--compound');
-    if (compoundRow && compoundRow !== el) {
-      compoundRow.classList.add('action-reset');
-    }
-
     const holdMs = isTouchUi() ? 450 : 0;
 
     requestAnimationFrame(() => {
       blurElement(el);
-      if (compoundRow) {
-        blurElement(compoundRow.querySelector('.action-row__main'));
-      }
       window.setTimeout(() => {
         el.classList.remove('action-reset');
-        compoundRow?.classList.remove('action-reset');
         blurElement(el);
       }, holdMs);
     });
   }
 
-  function clearStaleCompoundFocus() {
-    document.querySelectorAll(COMPOUND_MAIN_SELECTOR).forEach((el) => {
+  function clearStaleFocus() {
+    document.querySelectorAll('.action-row--link.action-reset').forEach((el) => {
+      el.classList.remove('action-reset');
       blurElement(el);
-      clearCompoundReset(el, el.closest('.action-row--compound'));
     });
     document.querySelectorAll('.action-row__tool--whatsapp.action-reset').forEach((el) => {
       el.classList.remove('action-reset');
       blurElement(el);
     });
-    defocusPage();
   }
 
   function init() {
@@ -196,11 +107,11 @@ const FocusReset = (() => {
 
     document.addEventListener('visibilitychange', () => {
       if (!document.hidden) {
-        clearStaleCompoundFocus();
+        clearStaleFocus();
       }
     });
 
-    window.addEventListener('pageshow', clearStaleCompoundFocus);
+    window.addEventListener('pageshow', clearStaleFocus);
 
     document.querySelectorAll('[data-action]').forEach((button) => {
       button.addEventListener('click', () => {
@@ -210,7 +121,7 @@ const FocusReset = (() => {
     });
   }
 
-  return { init, blurElement, resetControlVisual, resetCompoundMain, resetToolVisual };
+  return { init, blurElement, resetControlVisual, resetToolVisual };
 })();
 
 window.FocusReset = FocusReset;

@@ -102,12 +102,12 @@ html {
     height: 18px;
   }
 
-  .action-row--compound .action-row__tools {
-    padding: 5px 6px 5px 3px;
-    gap: 3px;
+  .action-row-tools {
+    gap: 4px;
+    padding: 0 2px 2px;
   }
 
-  .action-row__tool {
+  .action-row-tools__btn {
     width: 34px;
     height: 34px;
     min-width: 34px;
@@ -159,7 +159,7 @@ html {
     font-size: 7px;
   }
 
-  .action-row__main {
+  .action-row--link {
     padding: 8px 10px;
   }
 
