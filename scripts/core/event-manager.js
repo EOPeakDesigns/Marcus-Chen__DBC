@@ -204,7 +204,7 @@ class EventManager {
    */
   setupContactPills() {
     this.contactPills = document.querySelectorAll(
-      '.action-row--link[data-contact], .action-row__tool[data-contact], .social-btn[data-contact]'
+      '.action-row--link[data-contact], .action-row__main[data-contact], .action-row__tool[data-contact], .social-btn[data-contact]'
     );
 
     this.contactPills.forEach((pill) => {
@@ -233,7 +233,13 @@ class EventManager {
           e.stopPropagation();
         }
         if (!pill.classList.contains('social-btn')) {
-          if (pill.matches('.action-row__tool--whatsapp')) {
+          if (
+            pill.matches(
+              '.action-row__main[data-contact="phone"], .action-row__main[data-contact="email"]'
+            )
+          ) {
+            window.FocusReset?.resetPersistLink?.(pill);
+          } else if (pill.matches('.action-row__tool--whatsapp')) {
             window.FocusReset?.resetToolVisual?.(pill);
           } else {
             window.FocusReset?.resetControlVisual?.(pill);
@@ -282,7 +288,7 @@ class EventManager {
   async handleCopyClick(textToCopy, type, button) {
     try {
       // Check if the parent container has no-notification attribute
-      const parentContainer = button.closest('.action-row-tools, .action-row');
+      const parentContainer = button.closest('.action-row--compound, .action-row');
       const noNotification = parentContainer?.hasAttribute('data-no-notification');
       
       // Show visual feedback immediately

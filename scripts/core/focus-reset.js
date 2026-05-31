@@ -12,6 +12,9 @@ const FocusReset = (() => {
     '.stat-card'
   ].join(', ');
 
+  const PERSIST_RESET_SELECTOR =
+    '.action-row__main[data-contact="phone"], .action-row__main[data-contact="email"]';
+
   const MODAL_TRIGGER_ACTIONS = new Set(['open-qr', 'open-showcase-video']);
 
   function isTouchUi() {
@@ -22,6 +25,80 @@ const FocusReset = (() => {
     if (el instanceof HTMLElement && typeof el.blur === 'function') {
       el.blur();
     }
+  }
+
+  function defocusPage() {
+    const active = document.activeElement;
+    if (active instanceof HTMLElement && active !== document.body) {
+      active.blur();
+    }
+
+    if (!document.body.hasAttribute('tabindex')) {
+      document.body.setAttribute('tabindex', '-1');
+    }
+
+    document.body.focus({ preventScroll: true });
+    document.body.removeAttribute('tabindex');
+  }
+
+  function clearPersistReset(el, compoundRow) {
+    el.classList.remove('action-reset');
+    compoundRow?.classList.remove('action-reset');
+    blurElement(el);
+  }
+
+  /**
+   * Call / Email — keep reset until tap elsewhere or return from dialer/Gmail
+   */
+  function resetPersistLink(el) {
+    if (!(el instanceof HTMLElement)) return;
+
+    const compoundRow = el.closest('.action-row--compound');
+    el.classList.remove('modal-close-focus');
+    el.classList.add('action-reset');
+    if (compoundRow) {
+      compoundRow.classList.add('action-reset');
+    }
+
+    const attemptDefocus = () => {
+      blurElement(el);
+      if (document.activeElement === el) {
+        defocusPage();
+        blurElement(el);
+      }
+    };
+
+    attemptDefocus();
+    requestAnimationFrame(attemptDefocus);
+    window.setTimeout(attemptDefocus, 0);
+    window.setTimeout(attemptDefocus, 50);
+
+    const finish = () => {
+      clearPersistReset(el, compoundRow);
+      defocusPage();
+    };
+
+    document.addEventListener(
+      'pointerdown',
+      (event) => {
+        if (!el.contains(event.target)) {
+          finish();
+        }
+      },
+      { once: true, capture: true }
+    );
+
+    window.addEventListener('pageshow', finish, { once: true });
+
+    document.addEventListener(
+      'visibilitychange',
+      () => {
+        if (!document.hidden) {
+          finish();
+        }
+      },
+      { once: true }
+    );
   }
 
   function resetToolVisual(el) {
@@ -55,6 +132,12 @@ const FocusReset = (() => {
 
     if (target.closest('.copy-btn, .action-row__tool--copy, .social-btn')) return;
 
+    const persistLink = target.closest(PERSIST_RESET_SELECTOR);
+    if (persistLink instanceof HTMLElement && isTouchUi()) {
+      resetPersistLink(persistLink);
+      return;
+    }
+
     const whatsappTool = target.closest('.action-row__tool--whatsapp');
     if (whatsappTool instanceof HTMLElement && isTouchUi()) {
       resetToolVisual(whatsappTool);
@@ -69,6 +152,11 @@ const FocusReset = (() => {
 
   function resetControlVisual(el) {
     if (!(el instanceof HTMLElement)) return;
+
+    if (isTouchUi() && el.matches(PERSIST_RESET_SELECTOR)) {
+      resetPersistLink(el);
+      return;
+    }
 
     if (isTouchUi() && el.matches('.action-row__tool--whatsapp')) {
       resetToolVisual(el);
@@ -91,6 +179,9 @@ const FocusReset = (() => {
   }
 
   function clearStaleFocus() {
+    document.querySelectorAll(PERSIST_RESET_SELECTOR).forEach((el) => {
+      clearPersistReset(el, el.closest('.action-row--compound'));
+    });
     document.querySelectorAll('.action-row--link.action-reset').forEach((el) => {
       el.classList.remove('action-reset');
       blurElement(el);
@@ -99,6 +190,7 @@ const FocusReset = (() => {
       el.classList.remove('action-reset');
       blurElement(el);
     });
+    defocusPage();
   }
 
   function init() {
@@ -121,7 +213,7 @@ const FocusReset = (() => {
     });
   }
 
-  return { init, blurElement, resetControlVisual, resetToolVisual };
+  return { init, blurElement, resetControlVisual, resetPersistLink, resetToolVisual };
 })();
 
 window.FocusReset = FocusReset;

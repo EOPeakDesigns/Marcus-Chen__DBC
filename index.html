@@ -146,41 +146,43 @@
     <!-- Contact actions -->
     <section class="contact-actions reveal" aria-label="Contact">
       <div class="action-rows">
-        <a href="tel:+14157891234" class="action-row action-row--link" data-contact="phone" aria-label="Call Marcus Chen">
-          <span class="action-row__icon action-row__icon--call" aria-hidden="true">
-            <svg viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>
-          </span>
-          <span class="action-row__text">
-            <span class="action-row__title">Call</span>
-            <span class="action-row__subtitle" data-field="phone-display">+1-415-789-1234</span>
-          </span>
-          <svg class="action-row__chevron" aria-hidden="true" viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
-        </a>
-        <div class="action-row-tools" data-no-notification="true" role="group" aria-label="Phone actions">
-          <a href="#" class="action-row-tools__btn action-row-tools__btn--whatsapp action-row__tool--whatsapp" data-contact="whatsapp" rel="noopener noreferrer" aria-label="Message on WhatsApp">
-            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+        <div class="action-row action-row--compound" data-no-notification="true">
+          <a href="tel:+14157891234" class="action-row__main" data-contact="phone" aria-label="Call Marcus Chen">
+            <span class="action-row__icon action-row__icon--call" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>
+            </span>
+            <span class="action-row__text">
+              <span class="action-row__title">Call</span>
+              <span class="action-row__subtitle" data-field="phone-display">+1-415-789-1234</span>
+            </span>
           </a>
-          <button type="button" class="action-row-tools__btn action-row-tools__btn--copy action-row__tool--copy copy-btn" data-copy="+14157891234" data-copy-type="phone" aria-label="Copy phone number">
-            <svg class="copy-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
-            <svg class="success-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
-          </button>
+          <div class="action-row__tools" role="group" aria-label="Phone actions">
+            <a href="#" class="action-row__tool action-row__tool--whatsapp" data-contact="whatsapp" rel="noopener noreferrer" aria-label="Message on WhatsApp">
+              <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+            </a>
+            <button type="button" class="action-row__tool action-row__tool--copy copy-btn" data-copy="+14157891234" data-copy-type="phone" aria-label="Copy phone number">
+              <svg class="copy-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+              <svg class="success-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+            </button>
+          </div>
         </div>
 
-        <a href="mailto:marcus.chen@techflow.com" class="action-row action-row--link" data-contact="email" aria-label="Email Marcus Chen">
-          <span class="action-row__icon action-row__icon--email" aria-hidden="true">
-            <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-          </span>
-          <span class="action-row__text">
-            <span class="action-row__title">Email</span>
-            <span class="action-row__subtitle" data-field="email-display">marcus.chen@techflow.com</span>
-          </span>
-          <svg class="action-row__chevron" aria-hidden="true" viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
-        </a>
-        <div class="action-row-tools" data-no-notification="true" role="group" aria-label="Email actions">
-          <button type="button" class="action-row-tools__btn action-row-tools__btn--copy action-row__tool--copy copy-btn" data-copy="marcus.chen@techflow.com" data-copy-type="email" aria-label="Copy email address">
-            <svg class="copy-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
-            <svg class="success-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
-          </button>
+        <div class="action-row action-row--compound" data-no-notification="true">
+          <a href="mailto:marcus.chen@techflow.com" class="action-row__main" data-contact="email" aria-label="Email Marcus Chen">
+            <span class="action-row__icon action-row__icon--email" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+            </span>
+            <span class="action-row__text">
+              <span class="action-row__title">Email</span>
+              <span class="action-row__subtitle" data-field="email-display">marcus.chen@techflow.com</span>
+            </span>
+          </a>
+          <div class="action-row__tools" role="group" aria-label="Email actions">
+            <button type="button" class="action-row__tool action-row__tool--copy copy-btn" data-copy="marcus.chen@techflow.com" data-copy-type="email" aria-label="Copy email address">
+              <svg class="copy-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+              <svg class="success-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+            </button>
+          </div>
         </div>
 
         <a href="https://www.techflowinnovations.com" class="action-row action-row--link" data-contact="website" target="_blank" rel="noopener noreferrer" aria-label="Visit TechFlow Innovations website">

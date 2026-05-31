@@ -681,6 +681,7 @@ class LinkRouter {
     if (key === 'email') {
       event?.preventDefault();
       event?.stopPropagation();
+      window.FocusReset?.resetPersistLink?.(el);
       const email =
         el.getAttribute('data-email') ||
         (el.getAttribute('data-web-href') || el.getAttribute('href') || '')
@@ -723,12 +724,8 @@ class LinkRouter {
     }
 
     if (key === 'phone') {
-      event?.preventDefault();
-      event?.stopPropagation();
       LinkRouter.markNavigation();
-      const tel = el.getAttribute('href');
-      if (tel) window.location.assign(tel);
-      return true;
+      return false;
     }
 
     return false;
